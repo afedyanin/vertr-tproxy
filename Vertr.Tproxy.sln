@@ -1,0 +1,71 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34916.146
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DFBB32DB-3010-439F-AC6A-BFAFFC0C4C08}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{13DDA2F8-6001-4EA2-B461-8664A7B3D954}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{41854E13-8F88-4879-80AD-692B082B8259}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitlab-ci.yml = .gitlab-ci.yml
+		CHANGELOG = CHANGELOG
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vertr.Tproxy.Server", "src\Vertr.Tproxy.Server\Vertr.Tproxy.Server.csproj", "{4CBC074D-BB71-4644-B752-0C87FFE6AA66}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vertr.Tproxy.Intergration.Tests", "tests\Vertr.Tproxy.Intergration.Tests\Vertr.Tproxy.Intergration.Tests.csproj", "{F5DB6311-DD09-4E2A-9287-A5E3C5F66A97}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vertr.Tproxy.Client", "src\Vertr.Tproxy.Client\Vertr.Tproxy.Client.csproj", "{B4438214-DAA3-4938-B42A-2C66972BFB42}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vertr.Tproxy.Client.Tests", "tests\Vertr.Tproxy.Client.Tests\Vertr.Tproxy.Client.Tests.csproj", "{D7AF5E0C-727F-4A2B-BE1D-C9690D1C0C42}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vertr.Tproxy.Server.Tests", "tests\Vertr.Tproxy.Server.Tests\Vertr.Tproxy.Server.Tests.csproj", "{E267ACD4-01CA-4371-9543-66625486F012}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4CBC074D-BB71-4644-B752-0C87FFE6AA66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CBC074D-BB71-4644-B752-0C87FFE6AA66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CBC074D-BB71-4644-B752-0C87FFE6AA66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CBC074D-BB71-4644-B752-0C87FFE6AA66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5DB6311-DD09-4E2A-9287-A5E3C5F66A97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5DB6311-DD09-4E2A-9287-A5E3C5F66A97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5DB6311-DD09-4E2A-9287-A5E3C5F66A97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5DB6311-DD09-4E2A-9287-A5E3C5F66A97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4438214-DAA3-4938-B42A-2C66972BFB42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4438214-DAA3-4938-B42A-2C66972BFB42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4438214-DAA3-4938-B42A-2C66972BFB42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4438214-DAA3-4938-B42A-2C66972BFB42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7AF5E0C-727F-4A2B-BE1D-C9690D1C0C42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7AF5E0C-727F-4A2B-BE1D-C9690D1C0C42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7AF5E0C-727F-4A2B-BE1D-C9690D1C0C42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7AF5E0C-727F-4A2B-BE1D-C9690D1C0C42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E267ACD4-01CA-4371-9543-66625486F012}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E267ACD4-01CA-4371-9543-66625486F012}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E267ACD4-01CA-4371-9543-66625486F012}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E267ACD4-01CA-4371-9543-66625486F012}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4CBC074D-BB71-4644-B752-0C87FFE6AA66} = {DFBB32DB-3010-439F-AC6A-BFAFFC0C4C08}
+		{F5DB6311-DD09-4E2A-9287-A5E3C5F66A97} = {13DDA2F8-6001-4EA2-B461-8664A7B3D954}
+		{B4438214-DAA3-4938-B42A-2C66972BFB42} = {DFBB32DB-3010-439F-AC6A-BFAFFC0C4C08}
+		{D7AF5E0C-727F-4A2B-BE1D-C9690D1C0C42} = {13DDA2F8-6001-4EA2-B461-8664A7B3D954}
+		{E267ACD4-01CA-4371-9543-66625486F012} = {13DDA2F8-6001-4EA2-B461-8664A7B3D954}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9261A401-9B4D-41D6-9DDE-3A6B02B4190F}
+	EndGlobalSection
+EndGlobal
