@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.0" />
-    <PackageReference Include="Tinkoff.InvestApi" Version="0.6.14" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.0.1" />
+    <PackageReference Include="Tinkoff.InvestApi" Version="0.6.17" />
   </ItemGroup>
 
   <ItemGroup>
