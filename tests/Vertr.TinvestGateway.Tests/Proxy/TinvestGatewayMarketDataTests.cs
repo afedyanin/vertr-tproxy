@@ -48,8 +48,7 @@ public class TinvestGatewayMarketDataTests
     public async Task CanGetInstrumentBySymbol(string classCode, string ticker)
     {
         var gateway = new TinvestGatewayMarketData(_client);
-        var symbol = new Symbol(classCode, ticker);
-        var instrument = await gateway.GetInstrumentBySymbol(symbol);
+        var instrument = await gateway.GetInstrumentBySymbol(classCode, ticker);
 
         Console.WriteLine(instrument);
 

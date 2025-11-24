@@ -46,12 +46,12 @@ internal class TinvestGatewayMarketData : TinvestGatewayBase, IMarketDataGateway
         return instrument;
     }
 
-    public async Task<Instrument?> GetInstrumentBySymbol(Symbol symbol)
+    public async Task<Instrument?> GetInstrumentBySymbol(string classCode, string ticker)
     {
         var request = new Tinkoff.InvestApi.V1.InstrumentRequest
         {
-            ClassCode = symbol.ClassCode,
-            Id = symbol.Ticker,
+            ClassCode = classCode,
+            Id = ticker,
             IdType = Tinkoff.InvestApi.V1.InstrumentIdType.Ticker,
         };
 

@@ -4,15 +4,12 @@ using Vertr.TinvestGateway.Contracts.MarketData;
 
 namespace Vertr.TinvestGateway.DataAccess.Redis;
 
-public class CandlestickRepository
+internal class CandlestickRepository: RedisRepositoryBase
 {
-    private readonly IConnectionMultiplexer _connectionMultiplexer;
-
     private static readonly string _prefixKey = "market.candles";
 
-    public CandlestickRepository(IConnectionMultiplexer connectionMultiplexer)
+    public CandlestickRepository(IConnectionMultiplexer connectionMultiplexer) : base(connectionMultiplexer)
     {
-        _connectionMultiplexer = connectionMultiplexer;
     }
 
     public async Task<long> Save(string ticker, Candlestick[] candles, int maxCount = 0)
@@ -22,30 +19,21 @@ public class CandlestickRepository
             return await SaveWithOverride(ticker, candles, maxCount);
         }
 
-        var key = GetKey(ticker);
-        var db = _connectionMultiplexer.GetDatabase();
-
         var entries = candles.Select(c => new SortedSetEntry(c.ToJson(), c.Time)).ToArray();
-        var added = await db.SortedSetAddAsync(key, entries);
+        var added = await GetDatabase().SortedSetAddAsync(GetKey(ticker), entries);
 
         return added;
     }
 
     public async Task<IEnumerable<Candlestick?>> GetLast(string ticker, long maxItems = -1)
     {
-        var key = GetKey(ticker);
-        var db = _connectionMultiplexer.GetDatabase();
-
-        var items = await db.SortedSetRangeByRankAsync(key, 0, maxItems, Order.Descending);
+        var items = await GetDatabase().SortedSetRangeByRankAsync(GetKey(ticker), 0, maxItems, Order.Descending);
         return items.Select(c => Candlestick.FromJson(c.ToString()));
     }
 
     internal async Task<long> RemoveLast(string ticker, long stopIndex)
     {
-        var db = _connectionMultiplexer.GetDatabase();
-        var key = GetKey(ticker);
-
-        var removed = await db.SortedSetRemoveRangeByRankAsync(key, 0, stopIndex);
+        var removed = await GetDatabase().SortedSetRemoveRangeByRankAsync(GetKey(ticker), 0, stopIndex);
         return removed;
     }
 
@@ -54,7 +42,7 @@ public class CandlestickRepository
         Debug.Assert(maxCount > 0);
 
         var key = GetKey(ticker);
-        var db = _connectionMultiplexer.GetDatabase();
+        var db = GetDatabase();
 
         var candlesTrimmed = candles.OrderBy(c => c.Time).TakeLast(maxCount).ToArray();
         var currentItemsCount = await db.SortedSetLengthAsync(key);
@@ -71,5 +59,5 @@ public class CandlestickRepository
         return added;
     }
 
-    private static RedisKey GetKey(string ticker) => new RedisKey($"{_prefixKey}.{ticker}");
+    private static RedisKey GetKey(string ticker) => new($"{_prefixKey}.{ticker}");
 }

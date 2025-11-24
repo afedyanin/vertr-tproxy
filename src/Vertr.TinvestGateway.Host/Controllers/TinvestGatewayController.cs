@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Vertr.TinvestGateway.Abstractions;
-using Vertr.TinvestGateway.Contracts.MarketData;
 using Vertr.TinvestGateway.Contracts.Orders;
 using Vertr.TinvestGateway.Contracts.Portfolio;
 
@@ -31,8 +30,7 @@ public class TinvestGatewayController : ControllerBase
     [HttpGet("instrument-by-ticker/{classCode}/{ticker}")]
     public async Task<IActionResult> GetInstrumentByTicker(string classCode, string ticker)
     {
-        var symbol = new Symbol(classCode, ticker);
-        var instrument = await _marketDataGayeway.GetInstrumentBySymbol(symbol);
+        var instrument = await _marketDataGayeway.GetInstrumentBySymbol(classCode, ticker);
         return Ok(instrument);
     }
 

@@ -75,4 +75,36 @@ public class SimpleRedisTests
 
         Assert.Pass();
     }
+
+
+    [Test]
+    public async Task CanUseHashSet()
+    {
+        var redis = ConnectionMultiplexer.Connect("localhost");
+        var db = redis.GetDatabase();
+
+        var key = new RedisKey("market.instruments");
+
+        var id = Guid.NewGuid();
+        var instrument = new Instrument
+        {
+            ClassCode = "ClassCode",
+            Ticker = "Ticker",
+            Currency = "RUB",
+            Id = id,
+            InstrumentType = "SomeType",
+            LotSize = 10,
+            Name = "Some instrument name"
+        };
+
+        var item = new HashEntry(instrument.Id.ToString(), instrument.ToJson());
+
+        await db.HashSetAsync(key, [item]);
+        var saved = await db.HashGetAsync(key, instrument.Id.ToString());
+        var restored = Instrument.FromJson(saved.ToString());
+
+        Assert.That(restored, Is.Not.Null);
+
+        Console.WriteLine(restored);
+    }
 }
