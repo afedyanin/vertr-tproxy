@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Vertr.TinvestGateway.DataAccess.Redis\Vertr.TinvestGateway.DataAccess.Redis.csproj" />
     <ProjectReference Include="..\..\src\Vertr.TinvestGateway\Vertr.TinvestGateway.csproj" />
   </ItemGroup>
 

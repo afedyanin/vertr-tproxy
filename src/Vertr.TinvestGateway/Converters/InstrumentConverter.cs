@@ -8,7 +8,8 @@ internal static class InstrumentConverter
         => new Instrument
         {
             Id = Guid.Parse(instrument.Uid),
-            Symbol = new Symbol(instrument.ClassCode, instrument.Ticker),
+            ClassCode = instrument.ClassCode,
+            Ticker = instrument.Ticker,
             InstrumentType = instrument.InstrumentType,
             Name = instrument.Name,
         };
@@ -17,7 +18,8 @@ internal static class InstrumentConverter
         => new Instrument
         {
             Id = Guid.Parse(instrument.Uid),
-            Symbol = new Symbol(instrument.ClassCode, instrument.Ticker),
+            ClassCode = instrument.ClassCode,
+            Ticker = instrument.Ticker,
             InstrumentType = instrument.InstrumentType,
             Name = instrument.Name,
             Currency = instrument.Currency,
