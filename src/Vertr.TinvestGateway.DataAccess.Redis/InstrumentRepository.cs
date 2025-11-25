@@ -53,5 +53,14 @@ namespace Vertr.TinvestGateway.DataAccess.Redis
 
             return await Get(instrumentId);
         }
+
+        public async Task Clear()
+        {
+            var db = GetDatabase();
+
+            await Task.WhenAll(
+                db.KeyDeleteAsync(_instrumentsKey),
+                db.KeyDeleteAsync(_symbolsKey));
+        }
     }
 }
