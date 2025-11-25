@@ -1,0 +1,30 @@
+﻿@baseUrl = http://localhost:5099/api/order-storage
+@portfolioId = 830CFBD3-9227-4585-931F-2B20ACECCD4A
+
+@orderId = da556e67-8507-4bd0-858a-d6ee29caa953
+
+@requestId = db7fb9b3-b6f7-40f1-9c40-aa58e7c06538
+
+### Requests
+GET {{baseUrl}}/requests/{{portfolioId}}
+
+### Single Request
+GET {{baseUrl}}/order-request/{{requestId}}
+
+### Reponses
+GET {{baseUrl}}/responses/{{portfolioId}}
+
+### Single Reponse
+GET {{baseUrl}}/order-response/{{orderId}}
+
+
+### States
+GET {{baseUrl}}/states/{{orderId}}/{{portfolioId}}
+
+### Order Trades
+#@orderId = 113d5ec9-a64a-4d42-abfd-4b68f5b001dc
+GET {{baseUrl}}/trades/{{orderId}}
+
+### Portfoio Trades
+GET {{baseUrl}}/portfolio-trades/{{portfolioId}}
+
