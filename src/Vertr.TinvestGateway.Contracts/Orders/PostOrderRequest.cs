@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Vertr.TinvestGateway.Contracts.Orders.Enums;
 
 namespace Vertr.TinvestGateway.Contracts.Orders;
@@ -14,5 +15,6 @@ public record class PostOrderRequest
     public required long QuantityLots { get; init; }
     public DateTime CreatedAt { get; init; }
 
-    public Guid? PortfolioId { get; init; }
+    public string ToJson() => JsonSerializer.Serialize(this, JsonOptions.DefaultOptions);
+    public static PostOrderRequest? FromJson(string json) => JsonSerializer.Deserialize<PostOrderRequest>(json, JsonOptions.DefaultOptions);
 }

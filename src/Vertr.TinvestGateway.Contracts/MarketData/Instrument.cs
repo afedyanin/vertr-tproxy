@@ -12,8 +12,8 @@ public record class Instrument
     public string? Currency { get; set; }
     public decimal? LotSize { get; set; }
 
-    public string ToJson() => JsonSerializer.Serialize(this);
+    public string ToJson() => JsonSerializer.Serialize(this, JsonOptions.DefaultOptions);
 
-    public static Instrument? FromJson(string json) => JsonSerializer.Deserialize<Instrument>(json);
+    public static Instrument? FromJson(string json) => JsonSerializer.Deserialize<Instrument>(json, JsonOptions.DefaultOptions);
 }
 

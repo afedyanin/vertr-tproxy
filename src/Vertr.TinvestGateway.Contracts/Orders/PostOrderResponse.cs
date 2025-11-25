@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Vertr.TinvestGateway.Contracts.Orders.Enums;
 using Vertr.TinvestGateway.Contracts.Portfolio;
 
@@ -34,5 +35,7 @@ public record class PostOrderResponse
 
     public Guid InstrumentId { get; init; }
 
-    public OrderEventSource Source { get; init; }
+    public string ToJson() => JsonSerializer.Serialize(this, JsonOptions.DefaultOptions);
+
+    public static PostOrderResponse? FromJson(string json) => JsonSerializer.Deserialize<PostOrderResponse>(json, JsonOptions.DefaultOptions);
 }

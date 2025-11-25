@@ -20,6 +20,14 @@ namespace Vertr.TinvestGateway.Tests.RedisTests
             _connectionMultiplexer.Close();
         }
 
+        [TearDown]
+        public async Task TearDown()
+        {
+            var repo = new InstrumentRepository(_connectionMultiplexer);
+            await repo.Clear();
+        }
+
+
         [Test]
         public async Task CanSaveInstrument()
         {
@@ -31,8 +39,6 @@ namespace Vertr.TinvestGateway.Tests.RedisTests
             Assert.That(saved, Is.Not.Null);
 
             Console.WriteLine(saved);
-
-            await repo.Clear();
         }
 
         [Test]
@@ -47,8 +53,6 @@ namespace Vertr.TinvestGateway.Tests.RedisTests
 
             Assert.That(item, Is.Not.Null);
             Console.WriteLine(item);
-
-            await repo.Clear();
         }
 
         [Test]
@@ -67,8 +71,6 @@ namespace Vertr.TinvestGateway.Tests.RedisTests
             Assert.That(item.LotSize, Is.EqualTo(instrument.LotSize));
 
             Console.WriteLine(item);
-
-            await repo.Clear();
         }
 
         private static Instrument CreateInstrument()
