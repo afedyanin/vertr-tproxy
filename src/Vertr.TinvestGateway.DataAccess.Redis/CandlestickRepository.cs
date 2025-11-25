@@ -31,6 +31,9 @@ internal class CandlestickRepository: RedisRepositoryBase
         return items.Select(c => Candlestick.FromJson(c.ToString()));
     }
 
+    public Task<bool> Clear(string ticker)
+        => GetDatabase().KeyDeleteAsync(GetKey(ticker));
+
     internal async Task<long> RemoveLast(string ticker, long stopIndex)
     {
         var removed = await GetDatabase().SortedSetRemoveRangeByRankAsync(GetKey(ticker), 0, stopIndex);

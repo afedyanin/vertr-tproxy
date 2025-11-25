@@ -48,12 +48,12 @@ public readonly record struct Candlestick
     public string ToJson()
     {
         var items = new decimal[] { Time, Open, High, Low, Close, Volume };
-        return JsonSerializer.Serialize(items);
+        return JsonSerializer.Serialize(items, JsonOptions.DefaultOptions);
     }
 
     public static Candlestick? FromJson(string jsonString)
     {
-        var items = JsonSerializer.Deserialize<decimal[]>(jsonString);
+        var items = JsonSerializer.Deserialize<decimal[]>(jsonString, JsonOptions.DefaultOptions);
 
         if (items == null || items.Length < 6)
         {

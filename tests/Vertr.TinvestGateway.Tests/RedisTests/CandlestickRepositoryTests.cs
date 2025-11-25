@@ -23,20 +23,22 @@ namespace Vertr.TinvestGateway.Tests.RedisTests
             _connectionMultiplexer.Close();
         }
 
+        [TearDown]
+        public async Task TearDown()
+        {
+            var repo = new CandlestickRepository(_connectionMultiplexer);
+            await repo.Clear(_ticker);
+        }
+
 
         [Test]
         public async Task CanSaveCandles()
         {
             var repo = new CandlestickRepository(_connectionMultiplexer);
-
-            // Cleanup
-            _ = await repo.RemoveLast(_ticker, 10);
-
             var startTime = new DateTime(2025, 11, 24, 10, 3, 0);
             var items = GenerateCandles(startTime, 5, 290, 3);
 
             var savedCount = await repo.Save(_ticker, items);
-
             Assert.That(savedCount, Is.EqualTo(items.Length));
         }
 
@@ -44,9 +46,6 @@ namespace Vertr.TinvestGateway.Tests.RedisTests
         public async Task CanSaveCandlesWithOverride()
         {
             var repo = new CandlestickRepository(_connectionMultiplexer);
-
-            // Cleanup
-            _ = await repo.RemoveLast(_ticker, 100);
 
             var startTime = new DateTime(2025, 11, 24, 10, 3, 0);
             var items = GenerateCandles(startTime, 15, 290, 3);
@@ -68,9 +67,6 @@ namespace Vertr.TinvestGateway.Tests.RedisTests
         public async Task CanSaveCandlesWithOverride2()
         {
             var repo = new CandlestickRepository(_connectionMultiplexer);
-
-            // Cleanup
-            _ = await repo.RemoveLast(_ticker, 100);
 
             var startTime = new DateTime(2025, 11, 24, 10, 3, 0);
             var items = GenerateCandles(startTime, 15, 290, 3);
@@ -97,15 +93,14 @@ namespace Vertr.TinvestGateway.Tests.RedisTests
             {
                 Console.WriteLine($"Time={item!.Value.GetTime()} {item}");
             }
+
+            Assert.Pass();
         }
 
         [Test]
         public async Task CanSaveCandlesWithOverride3()
         {
             var repo = new CandlestickRepository(_connectionMultiplexer);
-
-            // Cleanup
-            _ = await repo.RemoveLast(_ticker, 100);
 
             var startTime = new DateTime(2025, 11, 24, 10, 3, 0);
             var items = GenerateCandles(startTime, 5, 290, 3);
@@ -120,37 +115,43 @@ namespace Vertr.TinvestGateway.Tests.RedisTests
 
             var last = items.OrderBy(c => c.Time).Last();
 
-            var next1 = GenerateCandles(last.GetTime().AddMinutes(1), 1, 300, 7);
+            Console.WriteLine(" STEP 2: Генерим новую свечу и сохраняем в буфер с лимитом в 5. Ожидаем что, новая свеча вытеснит самую старую");
+            var next1 = GenerateCandles(last.GetTime().AddMinutes(10), 1, 300, 7);
             _ = await repo.Save(_ticker, next1, 5);
             var saved2 = await repo.GetLast(_ticker);
-            Console.WriteLine(" STEP 2: Генерим новую свечу и сохраняем в буфер с лимитом в 5. Ожидаем что, новая свеча вытеснит самую старую");
+            
             foreach (var item in saved2)
             {
                 Console.WriteLine($"Time={item!.Value.GetTime()} {item}");
             }
 
-            var next2 = GenerateCandles(last.GetTime().AddMinutes(2), 1, 300, 7);
+            Console.WriteLine(" STEP 3: Ожидаем что, вторая новая свеча вытеснит еще одну самую старую");
+            var next2 = GenerateCandles(last.GetTime().AddMinutes(15), 1, 300, 7);
             _ = await repo.Save(_ticker, next2, 5);
             var saved3 = await repo.GetLast(_ticker);
-            Console.WriteLine(" STEP 3: Ожидаем что, вторая новая свеча вытеснит еще одну самую старую");
             foreach (var item in saved3)
             {
                 Console.WriteLine($"Time={item!.Value.GetTime()} {item}");
             }
+
+            Assert.Pass();
         }
 
         [Test]
         public async Task CanGetCandles()
         {
             var repo = new CandlestickRepository(_connectionMultiplexer);
+            var startTime = new DateTime(2025, 11, 24, 10, 3, 0);
+            var items = GenerateCandles(startTime, 5, 290, 3);
+            var savedCount = await repo.Save(_ticker, items);
 
-            var items = await repo.GetLast(_ticker);
+            var last = await repo.GetLast(_ticker);
 
-            Assert.That(items.Count, Is.GreaterThan(0));
+            Assert.That(last.Count, Is.GreaterThan(0));
             
-            foreach (var item in items)
+            foreach (var item in last)
             {
-                Console.WriteLine($"Time={item.Value.GetTime()} {item}");
+                Console.WriteLine($"Time={item!.Value.GetTime()} {item}");
             }
 
             Assert.Pass();
@@ -160,6 +161,9 @@ namespace Vertr.TinvestGateway.Tests.RedisTests
         public async Task CanRemoveCandles()
         {
             var repo = new CandlestickRepository(_connectionMultiplexer);
+            var startTime = new DateTime(2025, 11, 24, 10, 3, 0);
+            var items = GenerateCandles(startTime, 5, 290, 3);
+            var savedCount = await repo.Save(_ticker, items);
 
             var removed = await repo.RemoveLast(_ticker, 10);
 

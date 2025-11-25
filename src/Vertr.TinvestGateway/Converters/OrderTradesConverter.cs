@@ -10,6 +10,7 @@ public static class OrderTradesConverter
         string currency = "rub")
         => new OrderTrades
         {
+            Id = Guid.NewGuid(),
             OrderId = source.OrderId,
             CreatedAt = source.CreatedAt.ToDateTime(),
             Direction = source.Direction.Convert(),
