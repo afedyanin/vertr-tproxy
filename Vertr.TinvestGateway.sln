@@ -12,6 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{41854E
 		compose.yaml = compose.yaml
 		LICENSE = LICENSE
 		README.md = README.md
+		TECH.md = TECH.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vertr.TinvestGateway", "src\Vertr.TinvestGateway\Vertr.TinvestGateway.csproj", "{1E39C24F-854A-7AC7-75FD-B424B3E24273}"

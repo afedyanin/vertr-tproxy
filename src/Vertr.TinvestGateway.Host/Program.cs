@@ -1,4 +1,5 @@
 using Vertr.TinvestGateway.Host.BackgroundServices;
+using Vertr.TinvestGateway.DataAccess.Redis;
 
 namespace Vertr.TinvestGateway.Host;
 
@@ -9,7 +10,6 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         var configuration = builder.Configuration;
-        //var connectionString = configuration.GetConnectionString(_connStringName);
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
@@ -17,6 +17,7 @@ public class Program
 
         // Add modules
         builder.Services.AddTinvestGateways(configuration);
+        builder.Services.AddRedisDataAccess(configuration);
 
         builder.Services.AddHostedService<MarketDataStreamService>();
         builder.Services.AddHostedService<OrderTradesStreamService>();

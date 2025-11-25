@@ -1,9 +1,10 @@
 ﻿using StackExchange.Redis;
 using Vertr.TinvestGateway.Contracts.Orders;
+using Vertr.TinvestGateway.Contracts.Repositories;
 
 namespace Vertr.TinvestGateway.DataAccess.Redis;
 
-internal class OrderStateRepository : RedisRepositoryBase
+internal class OrderStateRepository : RedisRepositoryBase, IOrderStateRepository
 {
     private static readonly string _statesKey = "orders.states";
     private static readonly string _statesByOrderKey = "orders.states.by-order";

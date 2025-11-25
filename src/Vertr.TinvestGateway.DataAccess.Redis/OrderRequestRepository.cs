@@ -1,9 +1,10 @@
 ﻿using StackExchange.Redis;
 using Vertr.TinvestGateway.Contracts.Orders;
+using Vertr.TinvestGateway.Contracts.Repositories;
 
 namespace Vertr.TinvestGateway.DataAccess.Redis;
 
-internal class OrderRequestRepository : RedisRepositoryBase
+internal class OrderRequestRepository : RedisRepositoryBase, IOrderRequestRepository
 {
     private static readonly string _requestsKey = "orders.requests";
     private static readonly string _requestsByPortfolioKey = "orders.requests.by-portfolio";
@@ -44,7 +45,7 @@ internal class OrderRequestRepository : RedisRepositoryBase
         var portfolioKey = GetPortfolioRequestKey(portfolioId.ToString());
         var requestIds = await db.ListRangeAsync(portfolioKey);
 
-        if (requestIds == null || requestIds.Length <=0)
+        if (requestIds == null || requestIds.Length <= 0)
         {
             return [];
         }
@@ -56,7 +57,7 @@ internal class OrderRequestRepository : RedisRepositoryBase
             var entry = await db.HashGetAsync(_requestsKey, requestId.ToString());
 
             if (entry.IsNullOrEmpty)
-            { 
+            {
                 continue;
             }
 
@@ -82,8 +83,8 @@ internal class OrderRequestRepository : RedisRepositoryBase
         foreach (var key in allPortfolioKeys)
         {
             if (key.IsNullOrEmpty)
-            { 
-                continue; 
+            {
+                continue;
             }
 
             var portfolioKey = GetPortfolioRequestKey(key.ToString());

@@ -2,6 +2,7 @@ using Grpc.Core;
 using Microsoft.Extensions.Options;
 using Tinkoff.InvestApi;
 using Vertr.TinvestGateway.BackgroundServices;
+using Vertr.TinvestGateway.Contracts.Repositories;
 using Vertr.TinvestGateway.Converters;
 
 namespace Vertr.TinvestGateway.Host.BackgroundServices;
@@ -25,8 +26,7 @@ public class OrderStateStreamService : StreamServiceBase
     {
         using var scope = ServiceProvider.CreateScope();
         var investApiClient = scope.ServiceProvider.GetRequiredService<InvestApiClient>();
-        //var portfolioRepository = scope.ServiceProvider.GetRequiredService<IPortfolioRepository>();
-        //var orderStateProducer = scope.ServiceProvider.GetRequiredService<IDataProducer<OrderState>>();
+        var orderStateRepository = scope.ServiceProvider.GetRequiredService<IOrderStateRepository>();
 
         var request = new Tinkoff.InvestApi.V1.OrderStateStreamRequest();
         var accountId = TinvestSettings.AccountId;
@@ -43,9 +43,7 @@ public class OrderStateStreamService : StreamServiceBase
                 logger.LogInformation($"New order state received for AccountId={accountId}");
 
                 var orderState = response.OrderState.Convert(accountId);
-
-                // TODO: Publish order state
-                // await orderStateProducer.Produce(orderState, stoppingToken);
+                await orderStateRepository.Save(orderState);
             }
             else if (response.PayloadCase == Tinkoff.InvestApi.V1.OrderStateStreamResponse.PayloadOneofCase.Ping)
             {

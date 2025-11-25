@@ -1,9 +1,10 @@
 ﻿using StackExchange.Redis;
 using Vertr.TinvestGateway.Contracts.MarketData;
+using Vertr.TinvestGateway.Contracts.Repositories;
 
 namespace Vertr.TinvestGateway.DataAccess.Redis
 {
-    internal class InstrumentRepository : RedisRepositoryBase
+    internal class InstrumentRepository : RedisRepositoryBase, IInstrumentRepository
     {
         private static readonly string _instrumentsKey = "market.instruments";
         private static readonly string _symbolsKey = "market.symbols";
@@ -16,9 +17,9 @@ namespace Vertr.TinvestGateway.DataAccess.Redis
         {
             var instrumentEntry = new HashEntry(instrument.Id.ToString(), instrument.ToJson());
             var symbolEntry = new HashEntry(instrument.Ticker, instrument.Id.ToString());
-            
+
             var db = GetDatabase();
-            
+
             await Task.WhenAll(
                 db.HashSetAsync(_instrumentsKey, [instrumentEntry]),
                 db.HashSetAsync(_symbolsKey, [symbolEntry]));

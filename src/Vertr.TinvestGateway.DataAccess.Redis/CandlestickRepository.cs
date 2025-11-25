@@ -1,10 +1,11 @@
 ﻿using StackExchange.Redis;
 using System.Diagnostics;
 using Vertr.TinvestGateway.Contracts.MarketData;
+using Vertr.TinvestGateway.Contracts.Repositories;
 
 namespace Vertr.TinvestGateway.DataAccess.Redis;
 
-internal class CandlestickRepository: RedisRepositoryBase
+internal class CandlestickRepository : RedisRepositoryBase, ICandlestickRepository
 {
     private static readonly string _prefixKey = "market.candles";
 

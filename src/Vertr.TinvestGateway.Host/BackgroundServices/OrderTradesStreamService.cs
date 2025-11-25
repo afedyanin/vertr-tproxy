@@ -2,6 +2,7 @@ using Grpc.Core;
 using Microsoft.Extensions.Options;
 using Tinkoff.InvestApi;
 using Vertr.TinvestGateway.BackgroundServices;
+using Vertr.TinvestGateway.Contracts.Repositories;
 using Vertr.TinvestGateway.Converters;
 
 namespace Vertr.TinvestGateway.Host.BackgroundServices;
@@ -26,6 +27,7 @@ public class OrderTradesStreamService : StreamServiceBase
 
         using var scope = ServiceProvider.CreateScope();
         var investApiClient = scope.ServiceProvider.GetRequiredService<InvestApiClient>();
+        var orderTradeRepository = scope.ServiceProvider.GetRequiredService<IOrderTradeRepository>();
 
         var request = new Tinkoff.InvestApi.V1.TradesStreamRequest();
         request.Accounts.Add(TinvestSettings.AccountId);
@@ -39,12 +41,10 @@ public class OrderTradesStreamService : StreamServiceBase
                 var instrumentId = Guid.Parse(response.OrderTrades.InstrumentUid);
 
                 // var currency = await currencyRepository.GetInstrumentCurrency(instrumentId);
-                var orderTradesRequest = response.OrderTrades.Convert();
+                var orderTrades = response.OrderTrades.Convert();
+                await orderTradeRepository.Save(orderTrades);
 
                 logger.LogInformation($"New order trades received for OrderId={response.OrderTrades.OrderId} InstrumentId={instrumentId}");
-
-                // TODO: Publish order trades
-                // await orderTradesProducer.Produce(orderTradesRequest, stoppingToken);
             }
             else if (response.PayloadCase == Tinkoff.InvestApi.V1.TradesStreamResponse.PayloadOneofCase.Ping)
             {
@@ -56,6 +56,4 @@ public class OrderTradesStreamService : StreamServiceBase
             }
         }
     }
-
-
 }

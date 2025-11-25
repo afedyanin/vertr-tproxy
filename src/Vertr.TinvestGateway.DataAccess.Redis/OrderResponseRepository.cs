@@ -1,9 +1,10 @@
 ﻿using StackExchange.Redis;
 using Vertr.TinvestGateway.Contracts.Orders;
+using Vertr.TinvestGateway.Contracts.Repositories;
 
 namespace Vertr.TinvestGateway.DataAccess.Redis;
 
-internal class OrderResponseRepository : RedisRepositoryBase
+internal class OrderResponseRepository : RedisRepositoryBase, IOrderResponseRepository
 {
     private static readonly string _responsesKey = "orders.responses";
     private static readonly string _responsesByPortfolioKey = "orders.responses.by-portfolio";

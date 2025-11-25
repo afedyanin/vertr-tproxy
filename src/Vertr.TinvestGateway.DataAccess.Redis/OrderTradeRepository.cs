@@ -1,9 +1,10 @@
 ﻿using StackExchange.Redis;
 using Vertr.TinvestGateway.Contracts.Orders;
+using Vertr.TinvestGateway.Contracts.Repositories;
 
 namespace Vertr.TinvestGateway.DataAccess.Redis;
 
-internal class OrderTradeRepository : RedisRepositoryBase
+internal class OrderTradeRepository : RedisRepositoryBase, IOrderTradeRepository
 {
     private static readonly string _tradesKey = "orders.trades";
     private static readonly string _tradesByOrderKey = "orders.trades.by-order";

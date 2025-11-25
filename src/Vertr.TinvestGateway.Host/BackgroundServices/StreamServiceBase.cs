@@ -71,10 +71,13 @@ public abstract class StreamServiceBase : BackgroundService
                 {
                     Logger.LogError(rpcEx, $"{_serviceName} consuming exception. Message={rpcEx.Message}");
                 }
+
+                await Task.Delay(5000);
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex, $"{_serviceName} consuming exception. Message={ex.Message}");
+                await Task.Delay(5000);
             }
         }
     }
