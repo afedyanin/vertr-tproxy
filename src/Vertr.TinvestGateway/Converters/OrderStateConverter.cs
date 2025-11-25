@@ -7,6 +7,7 @@ public static class OrderStateConverter
     public static OrderState Convert(this Tinkoff.InvestApi.V1.OrderState source)
         => new OrderState
         {
+            Id = Guid.NewGuid(),
             OrderId = source.OrderId,
             AveragePositionPrice = source.AveragePositionPrice.Convert(),
             Currency = source.Currency,
@@ -33,6 +34,7 @@ public static class OrderStateConverter
         string accountId)
         => new OrderState
         {
+            Id = Guid.NewGuid(),
             OrderId = source.OrderId,
             OrderRequestId = source.OrderRequestId,
             CreatedAt = source.CreatedAt?.ToDateTime() ?? DateTime.UtcNow,
