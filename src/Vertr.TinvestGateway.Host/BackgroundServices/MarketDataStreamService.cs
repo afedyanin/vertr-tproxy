@@ -1,6 +1,7 @@
 using Grpc.Core;
 using Microsoft.Extensions.Options;
 using Tinkoff.InvestApi;
+using Vertr.TinvestGateway.Abstractions;
 using Vertr.TinvestGateway.BackgroundServices;
 using Vertr.TinvestGateway.Contracts.Repositories;
 using Vertr.TinvestGateway.Converters;
@@ -14,32 +15,30 @@ public class MarketDataStreamService : StreamServiceBase
     public MarketDataStreamService(
         IServiceProvider serviceProvider,
         IOptions<TinvestSettings> tinvestOptions,
-        ILogger<OrderTradesStreamService> logger) :
+        ILogger<MarketDataStreamService> logger) :
             base(serviceProvider, tinvestOptions, logger)
     {
     }
 
-    protected override async Task StartConsumingLoop(CancellationToken stoppingToken)
+    protected override async Task OnBeforeStart(CancellationToken stoppingToken)
     {
-        while (!stoppingToken.IsCancellationRequested)
+        using var scope = ServiceProvider.CreateScope();
+        var marketDataGateway = scope.ServiceProvider.GetRequiredService<IMarketDataGateway>();
+        var instrumentRepository = scope.ServiceProvider.GetRequiredService<IInstrumentRepository>();
+
+        foreach (var sub in TinvestSettings.CandleSubscriptions)
         {
-            try
+            var instrument = await marketDataGateway.GetInstrumentById(sub.InstrumentId);
+
+            if (instrument == null)
             {
-                Logger.LogInformation($"{nameof(MarketDataStreamService)} started at {DateTime.UtcNow:O}");
-                await Subscribe(Logger, deadline: null, stoppingToken);
+                continue; 
             }
-            catch (RpcException rpcEx)
-            {
-                if (rpcEx.StatusCode != StatusCode.DeadlineExceeded)
-                {
-                    Logger.LogError(rpcEx, $"{nameof(MarketDataStreamService)} consuming exception. Message={rpcEx.Message}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, $"{nameof(MarketDataStreamService)} consuming exception. Message={ex.Message}");
-            }
+
+            await instrumentRepository.Save(instrument);
         }
+
+        // TODO: Fill repo from instrument list in config
     }
 
     protected override async Task Subscribe(
@@ -85,15 +84,10 @@ public class MarketDataStreamService : StreamServiceBase
         {
             if (response.PayloadCase == Tinkoff.InvestApi.V1.MarketDataResponse.PayloadOneofCase.Candle)
             {
-                var instrumentId = response.Candle.InstrumentUid;
-                var candle = response.Candle.Convert(Guid.Parse(instrumentId));
+                var instrumentId = new Guid(response.Candle.InstrumentUid);
+                var candle = response.Candle.ToCandlestick();
+                await candlestickReposity.Save(instrumentId, [candle]);
                 logger.LogInformation($"Candle subscriptions received: candle={candle}");
-
-                //candlestickReposity.Save(candle);
-
-                // TODO: Publish candle
-                // await candlesRepository.Upsert([candle]);
-                //await marketDataProducer.Produce(candle, stoppingToken);
             }
             else if (response.PayloadCase == Tinkoff.InvestApi.V1.MarketDataResponse.PayloadOneofCase.SubscribeCandlesResponse)
             {

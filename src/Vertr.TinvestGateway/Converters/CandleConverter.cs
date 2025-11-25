@@ -17,13 +17,13 @@ public static class CandleConverter
             source.Low,
             source.Volume);
 
-    public static Candle Convert(this Tinkoff.InvestApi.V1.Candle source, Guid instrumentId)
-        => new Candle(
-            instrumentId,
+    public static Candlestick ToCandlestick(
+        this Tinkoff.InvestApi.V1.Candle source)
+        => new Candlestick(
             source.Time.ToDateTime(),
-            source.Open,
-            source.Close,
             source.High,
             source.Low,
+            source.Open,
+            source.Close,
             source.Volume);
 }

@@ -2,7 +2,7 @@
 
 namespace Vertr.TinvestGateway.DataAccess.Redis;
 
-internal abstract class RedisRepositoryBase : IDisposable
+internal abstract class RedisRepositoryBase
 {
     private readonly IConnectionMultiplexer _connection;
 
@@ -11,10 +11,5 @@ internal abstract class RedisRepositoryBase : IDisposable
     protected RedisRepositoryBase(IConnectionMultiplexer connectionMultiplexer)
     {
         _connection = connectionMultiplexer;
-    }
-
-    public void Dispose()
-    {
-        _connection?.Dispose();
     }
 }

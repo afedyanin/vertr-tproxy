@@ -4,7 +4,7 @@ namespace Vertr.TinvestGateway.Contracts.Repositories;
 
 public interface ICandlestickRepository
 {
-    public Task<bool> Clear(string ticker);
-    public Task<IEnumerable<Candlestick?>> GetLast(string ticker, long maxItems = -1);
-    public Task<long> Save(string ticker, Candlestick[] candles, int maxCount = 0);
+    public Task<bool> Clear(Guid instrumentId);
+    public Task<IEnumerable<Candlestick?>> GetLast(Guid instrumentId, long maxItems = -1);
+    public Task<long> Save(Guid instrumentId, Candlestick[] candles, int maxCount = 0);
 }

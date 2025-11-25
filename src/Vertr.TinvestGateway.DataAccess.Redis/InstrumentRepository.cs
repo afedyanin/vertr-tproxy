@@ -40,14 +40,14 @@ namespace Vertr.TinvestGateway.DataAccess.Redis
 
         public async Task<Instrument?> GetByTicker(string ticker)
         {
-            var entry = await GetDatabase().HashGetAsync(_symbolsKey, ticker);
+            var istrumentIdEntry = await GetDatabase().HashGetAsync(_symbolsKey, ticker);
 
-            if (entry.IsNullOrEmpty)
+            if (istrumentIdEntry.IsNullOrEmpty)
             {
                 return null;
             }
 
-            if (!Guid.TryParse(entry.ToString(), out var instrumentId))
+            if (!Guid.TryParse(istrumentIdEntry.ToString(), out var instrumentId))
             {
                 return null;
             }

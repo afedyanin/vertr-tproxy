@@ -13,39 +13,40 @@ internal class CandlestickRepository : RedisRepositoryBase, ICandlestickReposito
     {
     }
 
-    public async Task<long> Save(string ticker, Candlestick[] candles, int maxCount = 0)
+    public async Task<long> Save(Guid instrumentId, Candlestick[] candles, int maxCount = 0)
     {
         if (maxCount > 0)
         {
-            return await SaveWithOverride(ticker, candles, maxCount);
+            return await SaveWithOverride(instrumentId, candles, maxCount);
         }
 
         var entries = candles.Select(c => new SortedSetEntry(c.ToJson(), c.Time)).ToArray();
-        var added = await GetDatabase().SortedSetAddAsync(GetKey(ticker), entries);
+        var db = GetDatabase();
+        var added = await db.SortedSetAddAsync(GetKey(instrumentId), entries);
 
         return added;
     }
 
-    public async Task<IEnumerable<Candlestick?>> GetLast(string ticker, long maxItems = -1)
+    public async Task<IEnumerable<Candlestick?>> GetLast(Guid instrumentId, long maxItems = -1)
     {
-        var items = await GetDatabase().SortedSetRangeByRankAsync(GetKey(ticker), 0, maxItems, Order.Descending);
+        var items = await GetDatabase().SortedSetRangeByRankAsync(GetKey(instrumentId), 0, maxItems, Order.Descending);
         return items.Select(c => Candlestick.FromJson(c.ToString()));
     }
 
-    public Task<bool> Clear(string ticker)
-        => GetDatabase().KeyDeleteAsync(GetKey(ticker));
+    public Task<bool> Clear(Guid instrumentId)
+        => GetDatabase().KeyDeleteAsync(GetKey(instrumentId));
 
-    internal async Task<long> RemoveLast(string ticker, long stopIndex)
+    internal async Task<long> RemoveLast(Guid instrumentId, long stopIndex)
     {
-        var removed = await GetDatabase().SortedSetRemoveRangeByRankAsync(GetKey(ticker), 0, stopIndex);
+        var removed = await GetDatabase().SortedSetRemoveRangeByRankAsync(GetKey(instrumentId), 0, stopIndex);
         return removed;
     }
 
-    internal async Task<long> SaveWithOverride(string ticker, Candlestick[] candles, int maxCount)
+    internal async Task<long> SaveWithOverride(Guid instrumentId, Candlestick[] candles, int maxCount)
     {
         Debug.Assert(maxCount > 0);
 
-        var key = GetKey(ticker);
+        var key = GetKey(instrumentId);
         var db = GetDatabase();
 
         var candlesTrimmed = candles.OrderBy(c => c.Time).TakeLast(maxCount).ToArray();
@@ -54,7 +55,7 @@ internal class CandlestickRepository : RedisRepositoryBase, ICandlestickReposito
 
         if (toRemove > 0)
         {
-            await RemoveLast(ticker, toRemove - 1);
+            await RemoveLast(instrumentId, toRemove - 1);
         }
 
         var entries = candlesTrimmed.Select(c => new SortedSetEntry(c.ToJson(), c.Time)).ToArray();
@@ -63,5 +64,5 @@ internal class CandlestickRepository : RedisRepositoryBase, ICandlestickReposito
         return added;
     }
 
-    private static RedisKey GetKey(string ticker) => new($"{_prefixKey}.{ticker}");
+    private static RedisKey GetKey(Guid instrumentId) => new($"{_prefixKey}.{instrumentId}");
 }
