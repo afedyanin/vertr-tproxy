@@ -1,5 +1,5 @@
 ﻿@baseUrl = http://localhost:5099/api/order-storage
-@portfolioId = 830CFBD3-9227-4585-931F-2B20ACECCD4A
+@portfolioId = 2492B82B-5D8A-48F8-B72F-6FE76C9FE5DB
 
 @orderId = da556e67-8507-4bd0-858a-d6ee29caa953
 
@@ -15,6 +15,7 @@ GET {{baseUrl}}/order-request/{{requestId}}
 GET {{baseUrl}}/responses/{{portfolioId}}
 
 ### Single Reponse
+@orderId = b0286b86-6705-4037-9606-3b88128116a1
 GET {{baseUrl}}/order-response/{{orderId}}
 
 
@@ -22,9 +23,12 @@ GET {{baseUrl}}/order-response/{{orderId}}
 GET {{baseUrl}}/states/{{orderId}}/{{portfolioId}}
 
 ### Order Trades
-#@orderId = 113d5ec9-a64a-4d42-abfd-4b68f5b001dc
+@orderId = b0286b86-6705-4037-9606-3b88128116a1
 GET {{baseUrl}}/trades/{{orderId}}
 
 ### Portfoio Trades
 GET {{baseUrl}}/portfolio-trades/{{portfolioId}}
+
+### Portfoio Positions
+GET {{baseUrl}}/portfolio/{{portfolioId}}
 

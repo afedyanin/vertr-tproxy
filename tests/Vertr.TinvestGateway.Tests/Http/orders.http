@@ -14,7 +14,7 @@ Content-Type: application/json
   "instrumentId": "{{instrumentId}}",
   "requestId": "{{$guid}}",
   "portfolioId": "{{portfolioId}}",
-  "orderDirection": 1, 
+  "orderDirection": 2, 
   "orderType": 2, 
   "timeInForceType": 0,
   "priceType": 0,
