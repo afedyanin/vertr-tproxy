@@ -17,6 +17,8 @@ public class TinvestSettings
     public string AccountId { get; set; } = string.Empty;
 
     public CandleSubscriptionRequest[] CandleSubscriptions { get; set; } = [];
+
+    public Dictionary<string, Guid> Currencies { get; set; } = [];
 }
 
 public record class CandleSubscriptionRequest

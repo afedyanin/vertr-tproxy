@@ -42,7 +42,7 @@ internal class InstrumentRepository : RedisRepositoryBase, IInstrumentRepository
                 continue;
             }
 
-            var item = Instrument.FromJson(entry.ToString());
+            var item = Instrument.FromJson(entry.Value.ToString());
 
             if (item == null)
             {

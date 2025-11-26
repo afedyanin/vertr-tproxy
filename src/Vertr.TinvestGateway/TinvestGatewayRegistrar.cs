@@ -18,7 +18,7 @@ public static class TinvestGatewayRegistrar
         services.AddTransient<IPortfolioGateway, TinvestGatewayPortfolio>();
         services.AddTransient<IOrderExecutionGateway, TinvestGatewayOrders>();
 
-        services.AddTransient<IInstrumentProvider, IInstrumentProvider>();
+        services.AddTransient<IInstrumentProvider, InstrumentProvider>();
         services.AddTransient<IPortfolioService, PortfolioService>();
 
         return services;

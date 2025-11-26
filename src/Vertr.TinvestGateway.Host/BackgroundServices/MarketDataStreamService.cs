@@ -38,7 +38,19 @@ public class MarketDataStreamService : StreamServiceBase
             await instrumentRepository.Save(instrument);
         }
 
-        // TODO: Fill repo from instrument list in config
+        foreach(var kvp in TinvestSettings.Currencies)
+        {
+            var currency = await marketDataGateway.GetInstrumentById(kvp.Value);
+
+            if (currency == null)
+            {
+                continue;
+            }
+
+            currency.Ticker = kvp.Key;
+
+            await instrumentRepository.Save(currency);
+        }
     }
 
     protected override async Task Subscribe(
@@ -48,7 +60,7 @@ public class MarketDataStreamService : StreamServiceBase
     {
         using var scope = ServiceProvider.CreateScope();
         var investApiClient = scope.ServiceProvider.GetRequiredService<InvestApiClient>();
-        var candlestickReposity = scope.ServiceProvider.GetRequiredService<ICandlestickRepository>();
+        var candlestickRepository = scope.ServiceProvider.GetRequiredService<ICandlestickRepository>();
 
         var candleRequest = new Tinkoff.InvestApi.V1.SubscribeCandlesRequest
         {
@@ -86,7 +98,7 @@ public class MarketDataStreamService : StreamServiceBase
             {
                 var instrumentId = new Guid(response.Candle.InstrumentUid);
                 var candle = response.Candle.ToCandlestick();
-                await candlestickReposity.Save(instrumentId, [candle]);
+                await candlestickRepository.Save(instrumentId, [candle]);
                 logger.LogInformation($"Candle subscriptions received: candle={candle}");
             }
             else if (response.PayloadCase == Tinkoff.InvestApi.V1.MarketDataResponse.PayloadOneofCase.SubscribeCandlesResponse)

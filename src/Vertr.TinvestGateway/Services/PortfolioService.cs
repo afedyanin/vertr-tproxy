@@ -99,8 +99,8 @@ internal class PortfolioService : IPortfolioService
         var instruments = await _instrumentProvider.GetAll();
 
         var builder = portfolio == null ?
-            new PortfolioBuilder(portfolioId, instruments) :
-            new PortfolioBuilder(portfolio, instruments);
+            new PortfolioBuilder(portfolioId, instruments, _logger) :
+            new PortfolioBuilder(portfolio, instruments, _logger);
 
         return builder;
     }
@@ -108,30 +108,29 @@ internal class PortfolioService : IPortfolioService
 
     private class PortfolioBuilder
     {
-        private readonly Portfolio _portfolio;
+        private readonly Guid _portfolioId;
         private readonly Dictionary<Guid, Position> _comissions = [];
         private readonly Dictionary<Guid, Position> _positions = [];
         private readonly Dictionary<string, Instrument> _instrumentsByTicker;
+        private readonly ILogger _logger;
 
-        public PortfolioBuilder(Guid portfolioId, IEnumerable<Instrument> instruments) : this(instruments)
+        public PortfolioBuilder(
+            Portfolio portfolio, 
+            IEnumerable<Instrument> instruments,
+            ILogger logger) 
+            : this(portfolio.Id, instruments, logger)
         {
-            _portfolio = new Portfolio
-            {
-                Id = portfolioId,
-                UpdatedAt = DateTime.UtcNow,
-            };
+            _positions = portfolio.Positions.ToDictionary(x => x.InstrumentId, x => x);
+            _comissions = portfolio.Comissions.ToDictionary(x => x.InstrumentId, x => x);
         }
-
-        public PortfolioBuilder(Portfolio portfolio, IEnumerable<Instrument> instruments) : this(instruments)
+        public PortfolioBuilder(
+            Guid portfolioId, 
+            IEnumerable<Instrument> instruments,
+            ILogger logger)
         {
-            _portfolio = portfolio;
-            _positions = _portfolio.Positions.ToDictionary(x => x.InstrumentId, x => x);
-            _comissions = _portfolio.Comissions.ToDictionary(x => x.InstrumentId, x => x);
-        }
-
-        private PortfolioBuilder(IEnumerable<Instrument> instruments)
-        {
+            _portfolioId = portfolioId;
             _instrumentsByTicker = InstrumentsByTicker(instruments);
+            _logger = logger;
         }
 
         public PortfolioBuilder Apply(PostOrderResponse orderResponse)
@@ -173,7 +172,7 @@ internal class PortfolioService : IPortfolioService
         {
             var portfolio = new Portfolio()
             {
-                Id = _portfolio.Id,
+                Id = _portfolioId,
                 UpdatedAt = DateTime.UtcNow,
                 Comissions = [.. _comissions.Values],
                 Positions = [.. _positions.Values],
@@ -187,6 +186,8 @@ internal class PortfolioService : IPortfolioService
             var price = trade.Price?.Value ?? 0;
             _instrumentsByTicker.TryGetValue(trade.Price?.Currency ?? string.Empty, out var currencyInstrument);
             var currencyId = currencyInstrument?.Id ?? Guid.Empty;
+
+            // _logger.LogInformation($"Applying trade: {trade}. sPrice={trade.Price} CurrencyInstrument={currencyInstrument} CurrencyId={currencyId}");
 
             _positions.TryGetValue(instrumentId, out var positionEntry);
             _positions.TryGetValue(currencyId, out var moneyPositionEntry);
