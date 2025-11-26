@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Vertr.TinvestGateway.Contracts.Orders;
-using Vertr.TinvestGateway.Contracts.Repositories;
+using Vertr.TinvestGateway.Repositories;
 
 namespace Vertr.TinvestGateway.Host.Controllers;
 
@@ -12,17 +12,20 @@ public class OrderStorageController : ControllerBase
     private readonly IOrderStateRepository _orderStateRepository;
     private readonly IOrderRequestRepository _orderRequestRepository;
     private readonly IOrderResponseRepository _orderResponseRepository;
+    private readonly IPortfolioRepository _portfolioRepository;
 
     public OrderStorageController(
         IOrderTradeRepository orderTradeRepository,
         IOrderStateRepository orderStateRepository,
         IOrderRequestRepository orderRequestRepository,
-        IOrderResponseRepository orderResponseRepository)
+        IOrderResponseRepository orderResponseRepository,
+        IPortfolioRepository portfolioRepository)
     {
         _orderTradeRepository  = orderTradeRepository;
         _orderStateRepository = orderStateRepository;
         _orderRequestRepository = orderRequestRepository;
         _orderResponseRepository = orderResponseRepository;
+        _portfolioRepository = portfolioRepository;
     }
 
     [HttpGet("trades/{orderId:guid}")]
@@ -94,5 +97,18 @@ public class OrderStorageController : ControllerBase
         }
 
         return Ok(allTrades.ToArray());
+    }
+
+    [HttpGet("portfolio/{portfolioId:guid}")]
+    public async Task<IActionResult> GetPortfolio(Guid portfolioId)
+    {
+        var portfolio = await _portfolioRepository.Get(portfolioId);
+
+        if (portfolio == null)
+        {
+            return NotFound(); 
+        }
+
+        return Ok(portfolio);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Vertr.TinvestGateway.Contracts.MarketData;
 
-namespace Vertr.TinvestGateway.Contracts.Repositories;
+namespace Vertr.TinvestGateway.Repositories;
 
 public interface ICandlestickRepository
 {

@@ -1,6 +1,6 @@
 ﻿using StackExchange.Redis;
 using Vertr.TinvestGateway.Contracts.Orders;
-using Vertr.TinvestGateway.Contracts.Repositories;
+using Vertr.TinvestGateway.Repositories;
 
 namespace Vertr.TinvestGateway.DataAccess.Redis;
 

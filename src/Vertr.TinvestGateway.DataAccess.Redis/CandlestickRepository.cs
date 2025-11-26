@@ -1,7 +1,7 @@
 ﻿using StackExchange.Redis;
 using System.Diagnostics;
 using Vertr.TinvestGateway.Contracts.MarketData;
-using Vertr.TinvestGateway.Contracts.Repositories;
+using Vertr.TinvestGateway.Repositories;
 
 namespace Vertr.TinvestGateway.DataAccess.Redis;
 

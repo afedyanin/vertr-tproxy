@@ -1,9 +1,10 @@
 using Grpc.Core;
 using Microsoft.Extensions.Options;
 using Tinkoff.InvestApi;
+using Vertr.TinvestGateway.Abstractions;
 using Vertr.TinvestGateway.BackgroundServices;
-using Vertr.TinvestGateway.Contracts.Repositories;
 using Vertr.TinvestGateway.Converters;
+using Vertr.TinvestGateway.Repositories;
 
 namespace Vertr.TinvestGateway.Host.BackgroundServices;
 
@@ -28,6 +29,7 @@ public class OrderTradesStreamService : StreamServiceBase
         using var scope = ServiceProvider.CreateScope();
         var investApiClient = scope.ServiceProvider.GetRequiredService<InvestApiClient>();
         var orderTradeRepository = scope.ServiceProvider.GetRequiredService<IOrderTradeRepository>();
+        var portfolioService = scope.ServiceProvider.GetRequiredService<IPortfolioService>();
 
         var request = new Tinkoff.InvestApi.V1.TradesStreamRequest();
         request.Accounts.Add(TinvestSettings.AccountId);
@@ -38,13 +40,11 @@ public class OrderTradesStreamService : StreamServiceBase
         {
             if (response.PayloadCase == Tinkoff.InvestApi.V1.TradesStreamResponse.PayloadOneofCase.OrderTrades)
             {
-                var instrumentId = Guid.Parse(response.OrderTrades.InstrumentUid);
-
-                // var currency = await currencyRepository.GetInstrumentCurrency(instrumentId);
                 var orderTrades = response.OrderTrades.Convert();
                 await orderTradeRepository.Save(orderTrades);
+                await portfolioService.Update(orderTrades);
 
-                logger.LogInformation($"New order trades received for OrderId={response.OrderTrades.OrderId} InstrumentId={instrumentId}");
+                logger.LogInformation($"New order trades received for OrderId={response.OrderTrades.OrderId}");
             }
             else if (response.PayloadCase == Tinkoff.InvestApi.V1.TradesStreamResponse.PayloadOneofCase.Ping)
             {

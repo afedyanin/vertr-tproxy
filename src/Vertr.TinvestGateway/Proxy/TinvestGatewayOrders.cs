@@ -3,8 +3,8 @@ using Tinkoff.InvestApi;
 using Vertr.TinvestGateway.Abstractions;
 using Vertr.TinvestGateway.Contracts.Orders;
 using Vertr.TinvestGateway.Contracts.Orders.Enums;
-using Vertr.TinvestGateway.Contracts.Repositories;
 using Vertr.TinvestGateway.Converters;
+using Vertr.TinvestGateway.Repositories;
 
 namespace Vertr.TinvestGateway.Proxy;
 
@@ -14,16 +14,19 @@ internal class TinvestGatewayOrders : TinvestGatewayBase, IOrderExecutionGateway
 
     private readonly IOrderRequestRepository _orderRequestRepository;
     private readonly IOrderResponseRepository _orderResponseRepository;
+    private readonly IPortfolioService _portfolioService;
 
     public TinvestGatewayOrders(
         InvestApiClient investApiClient,
         IOrderRequestRepository orderRequestRepository,
         IOrderResponseRepository orderResponseRepository,
+        IPortfolioService portfolioService,
         ILogger<TinvestGatewayOrders> logger) : base(investApiClient)
     {
         _logger = logger;
         _orderRequestRepository = orderRequestRepository;
         _orderResponseRepository = orderResponseRepository;
+        _portfolioService = portfolioService;
     }
 
     public async Task<PostOrderResponse?> PostOrder(PostOrderRequest request, Guid portfolioId)
@@ -35,6 +38,7 @@ internal class TinvestGatewayOrders : TinvestGatewayBase, IOrderExecutionGateway
             var response = await InvestApiClient.Orders.PostOrderAsync(tRequest);
             var orderResponse = response.Convert();
             await _orderResponseRepository.Save(orderResponse, portfolioId);
+            await _portfolioService.Update(orderResponse, portfolioId);
 
             return orderResponse;
         }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using StackExchange.Redis;
-using Vertr.TinvestGateway.Contracts.Repositories;
+using Vertr.TinvestGateway.Repositories;
 using System.Diagnostics;
 
 namespace Vertr.TinvestGateway.DataAccess.Redis;
@@ -17,6 +17,7 @@ public static class RedisDataAccessRegistrar
         services.AddTransient<IOrderResponseRepository, OrderResponseRepository>();
         services.AddTransient<IOrderStateRepository, OrderStateRepository>();
         services.AddTransient<IOrderTradeRepository, OrderTradeRepository>();
+        services.AddTransient<IPortfolioRepository, PortfolioRepository>();
 
         var redisConnectionString = configuration.GetConnectionString("RedisConnection");
 

@@ -3,8 +3,8 @@ using Microsoft.Extensions.Options;
 using Tinkoff.InvestApi;
 using Vertr.TinvestGateway.Abstractions;
 using Vertr.TinvestGateway.BackgroundServices;
-using Vertr.TinvestGateway.Contracts.Repositories;
 using Vertr.TinvestGateway.Converters;
+using Vertr.TinvestGateway.Repositories;
 
 namespace Vertr.TinvestGateway.Host.BackgroundServices;
 

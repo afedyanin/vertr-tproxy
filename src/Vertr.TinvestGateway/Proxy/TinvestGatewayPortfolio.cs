@@ -19,6 +19,7 @@ internal class TinvestGatewayPortfolio : TinvestGatewayBase, IPortfolioGateway
 
         return accounts;
     }
+
     public async Task<Account[]?> GetSandboxAccounts()
     {
         var response = await InvestApiClient.Sandbox.GetSandboxAccountsAsync(new Tinkoff.InvestApi.V1.GetAccountsRequest());
@@ -26,6 +27,7 @@ internal class TinvestGatewayPortfolio : TinvestGatewayBase, IPortfolioGateway
 
         return accounts;
     }
+
     public async Task<string> CreateSandboxAccount(string accountName)
     {
         var tRequest = new Tinkoff.InvestApi.V1.OpenSandboxAccountRequest
@@ -76,20 +78,6 @@ internal class TinvestGatewayPortfolio : TinvestGatewayBase, IPortfolioGateway
         return portfolio;
     }
 
-    public async Task<TradeOperation[]?> GetOperationsOld(string accountId, DateTime from, DateTime to)
-    {
-        var request = new Tinkoff.InvestApi.V1.OperationsRequest
-        {
-            AccountId = accountId,
-            From = Timestamp.FromDateTime(from.ToUniversalTime()),
-            To = Timestamp.FromDateTime(to.ToUniversalTime()),
-        };
-
-        var response = await InvestApiClient.Operations.GetOperationsAsync(request);
-        var operations = response.Convert(accountId);
-
-        return operations;
-    }
     public async Task<TradeOperation[]?> GetOperations(string accountId, DateTime from, DateTime to)
     {
         var request = new Tinkoff.InvestApi.V1.GetOperationsByCursorRequest

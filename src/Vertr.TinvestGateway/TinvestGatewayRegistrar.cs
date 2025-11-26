@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Tinkoff.InvestApi;
 using Vertr.TinvestGateway.Abstractions;
 using Vertr.TinvestGateway.Proxy;
+using Vertr.TinvestGateway.Services;
 
 namespace Vertr.TinvestGateway;
 
@@ -16,6 +17,9 @@ public static class TinvestGatewayRegistrar
         services.AddTransient<IMarketDataGateway, TinvestGatewayMarketData>();
         services.AddTransient<IPortfolioGateway, TinvestGatewayPortfolio>();
         services.AddTransient<IOrderExecutionGateway, TinvestGatewayOrders>();
+
+        services.AddTransient<IInstrumentProvider, IInstrumentProvider>();
+        services.AddTransient<IPortfolioService, PortfolioService>();
 
         return services;
     }
