@@ -35,10 +35,10 @@ public class OrderStorageController : ControllerBase
         return Ok(trades);
     }
 
-    [HttpGet("states/{orderId:guid}/{portfolioId:guid}")]
-    public async Task<IActionResult> GetOrderStates(Guid orderId, Guid portfolioId)
+    [HttpGet("states/{orderId:guid}/{requestId:guid}")]
+    public async Task<IActionResult> GetOrderStates(Guid orderId, Guid requestId)
     {
-        var states = await _orderStateRepository.GetByIds(orderId.ToString(), portfolioId.ToString());
+        var states = await _orderStateRepository.GetByIds(orderId.ToString(), requestId.ToString());
         return Ok(states);
     }
 
@@ -102,7 +102,7 @@ public class OrderStorageController : ControllerBase
     [HttpGet("portfolio/{portfolioId:guid}")]
     public async Task<IActionResult> GetPortfolio(Guid portfolioId)
     {
-        var portfolio = await _portfolioRepository.Get(portfolioId);
+        var portfolio = await _portfolioRepository.GetById(portfolioId);
 
         if (portfolio == null)
         {

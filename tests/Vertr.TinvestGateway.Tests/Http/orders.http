@@ -6,13 +6,14 @@
 @instrumentId = e6123145-9665-43e0-8413-cd61b8aa9b13 
 
 ### Post market order
-POST {{baseUrl}}/orders/{{portfolioId}}
+POST {{baseUrl}}/orders
 Content-Type: application/json
 
 {
   "accountId": "{{accountId}}",
   "instrumentId": "{{instrumentId}}",
   "requestId": "{{$guid}}",
+  "portfolioId": "{{portfolioId}}"
   "orderDirection": 2, 
   "orderType": 2, 
   "timeInForceType": 0,

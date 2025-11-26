@@ -1,6 +1,7 @@
 using Grpc.Core;
 using Microsoft.Extensions.Options;
 using Tinkoff.InvestApi;
+using Vertr.TinvestGateway.Abstractions;
 using Vertr.TinvestGateway.BackgroundServices;
 using Vertr.TinvestGateway.Converters;
 using Vertr.TinvestGateway.Repositories;
@@ -27,6 +28,7 @@ public class OrderStateStreamService : StreamServiceBase
         using var scope = ServiceProvider.CreateScope();
         var investApiClient = scope.ServiceProvider.GetRequiredService<InvestApiClient>();
         var orderStateRepository = scope.ServiceProvider.GetRequiredService<IOrderStateRepository>();
+        var portfolioService = scope.ServiceProvider.GetRequiredService<IPortfolioService>();
 
         var request = new Tinkoff.InvestApi.V1.OrderStateStreamRequest();
         var accountId = TinvestSettings.AccountId;
@@ -44,6 +46,7 @@ public class OrderStateStreamService : StreamServiceBase
 
                 var orderState = response.OrderState.Convert(accountId);
                 await orderStateRepository.Save(orderState);
+                await portfolioService.BindOrderToPortfolio(orderState);
             }
             else if (response.PayloadCase == Tinkoff.InvestApi.V1.OrderStateStreamResponse.PayloadOneofCase.Ping)
             {

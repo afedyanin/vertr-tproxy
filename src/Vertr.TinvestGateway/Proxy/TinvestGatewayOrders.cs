@@ -29,16 +29,16 @@ internal class TinvestGatewayOrders : TinvestGatewayBase, IOrderExecutionGateway
         _portfolioService = portfolioService;
     }
 
-    public async Task<PostOrderResponse?> PostOrder(PostOrderRequest request, Guid portfolioId)
+    public async Task<PostOrderResponse?> PostOrder(PostOrderRequest request)
     {
         try
         {
-            await _orderRequestRepository.Save(request, portfolioId);
+            await _orderRequestRepository.Save(request, request.PortfolioId);
             var tRequest = request.Convert();
             var response = await InvestApiClient.Orders.PostOrderAsync(tRequest);
             var orderResponse = response.Convert();
-            await _orderResponseRepository.Save(orderResponse, portfolioId);
-            await _portfolioService.Update(orderResponse, portfolioId);
+            await _orderResponseRepository.Save(orderResponse, request.PortfolioId);
+            await _portfolioService.Update(orderResponse, request.PortfolioId);
 
             return orderResponse;
         }

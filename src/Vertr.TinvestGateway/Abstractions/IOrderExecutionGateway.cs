@@ -5,9 +5,7 @@ namespace Vertr.TinvestGateway.Abstractions;
 
 public interface IOrderExecutionGateway
 {
-    public Task<PostOrderResponse?> PostOrder(
-        PostOrderRequest request, 
-        Guid portfolioId);
+    public Task<PostOrderResponse?> PostOrder(PostOrderRequest request);
 
     public Task<DateTime?> CancelOrder(string accountId, string orderId);
 

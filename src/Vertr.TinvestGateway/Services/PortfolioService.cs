@@ -1,4 +1,5 @@
-﻿using Vertr.TinvestGateway.Abstractions;
+﻿using Microsoft.Extensions.Logging;
+using Vertr.TinvestGateway.Abstractions;
 using Vertr.TinvestGateway.Contracts.MarketData;
 using Vertr.TinvestGateway.Contracts.Orders;
 using Vertr.TinvestGateway.Contracts.Orders.Enums;
@@ -10,35 +11,33 @@ namespace Vertr.TinvestGateway.Services;
 internal class PortfolioService : IPortfolioService
 {
     private readonly IPortfolioRepository _portfolioRepository;
+    private readonly IOrderRequestRepository _orderRequestRepository;
     private readonly IInstrumentProvider _instrumentProvider;
+    private readonly ILogger<PortfolioService> _logger;
 
     private static SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
     public PortfolioService(
         IPortfolioRepository portfolioRepository,
-        IInstrumentProvider instrumentProvider)
+        IOrderRequestRepository orderRequestRepository,
+        IInstrumentProvider instrumentProvider,
+        ILogger<PortfolioService> logger)
     {
         _portfolioRepository = portfolioRepository;
         _instrumentProvider = instrumentProvider;
+        _orderRequestRepository = orderRequestRepository;
+        _logger = logger;
     }
 
     public async Task Update(PostOrderResponse orderResponse, Guid portfolioId)
     {
+        await _portfolioRepository.BindOrderToPortfolio(orderResponse.OrderId, portfolioId);
         await _semaphore.WaitAsync();
 
         try
         {
-            var instruments = await _instrumentProvider.GetAll();
-            var portfolio = await _portfolioRepository.Get(portfolioId);
-
-            var builder = portfolio == null ?
-                new PortfolioBuilder(portfolioId, instruments) :
-                new PortfolioBuilder(portfolio, instruments);
-
-            var newPortfolio = builder
-                .Apply(orderResponse)
-                .Build();
-
+            var builder = await CreateBuilderByPortfolioId(portfolioId);
+            var newPortfolio = builder.Apply(orderResponse).Build();
             await _portfolioRepository.Save(newPortfolio);
         }
         finally
@@ -49,29 +48,61 @@ internal class PortfolioService : IPortfolioService
 
     public async Task Update(OrderTrades orderTrades)
     {
+        var portfolioId = await _portfolioRepository.GetPortfolioByOrderId(orderTrades.OrderId);
 
+        if (!portfolioId.HasValue)
+        {
+            _logger.LogError($"Cannot determine portfolio for orderId={orderTrades.OrderId}. Skipping trades...");
+            return;
+        }
 
         await _semaphore.WaitAsync();
 
         try
         {
-            var instruments = await _instrumentProvider.GetAll();
-            var portfolio = await _portfolioRepository.Get(portfolioId);
-
-            var builder = portfolio == null ?
-                new PortfolioBuilder(portfolioId, instruments) :
-                new PortfolioBuilder(portfolio, instruments);
-
-            var newPortfolio = builder
-                .Apply(orderTrades)
-                .Build();
-
+            var builder = await CreateBuilderByPortfolioId(portfolioId.Value);
+            var newPortfolio = builder.Apply(orderTrades).Build();
             await _portfolioRepository.Save(newPortfolio);
         }
         finally
         {
             _semaphore.Release();
         }
+    }
+
+    public async Task BindOrderToPortfolio(OrderState orderState)
+    {
+        if (string.IsNullOrEmpty(orderState.OrderId))
+        {
+            return; 
+        }
+
+        if (string.IsNullOrEmpty(orderState.OrderRequestId))
+        {
+            return;
+        }
+
+        var orderRequest = await _orderRequestRepository.Get(new Guid(orderState.OrderRequestId));
+
+        if (orderRequest == null)
+        {
+            return;
+        }
+
+        await _portfolioRepository.BindOrderToPortfolio(orderState.OrderId, orderRequest.PortfolioId);
+    }
+
+
+    private async Task<PortfolioBuilder> CreateBuilderByPortfolioId(Guid portfolioId)
+    {
+        var portfolio = await _portfolioRepository.GetById(portfolioId);
+        var instruments = await _instrumentProvider.GetAll();
+
+        var builder = portfolio == null ?
+            new PortfolioBuilder(portfolioId, instruments) :
+            new PortfolioBuilder(portfolio, instruments);
+
+        return builder;
     }
 
 
@@ -82,22 +113,24 @@ internal class PortfolioService : IPortfolioService
         private readonly Dictionary<Guid, Position> _positions = [];
         private readonly Dictionary<string, Instrument> _instrumentsByTicker;
 
-        public PortfolioBuilder(Guid portfolioId, IEnumerable<Instrument> instruments)
+        public PortfolioBuilder(Guid portfolioId, IEnumerable<Instrument> instruments) : this(instruments)
         {
             _portfolio = new Portfolio
             {
                 Id = portfolioId,
                 UpdatedAt = DateTime.UtcNow,
             };
-
-            _instrumentsByTicker = InstrumentsByTicker(instruments);
         }
 
-        public PortfolioBuilder(Portfolio portfolio, IEnumerable<Instrument> instruments)
+        public PortfolioBuilder(Portfolio portfolio, IEnumerable<Instrument> instruments) : this(instruments)
         {
             _portfolio = portfolio;
             _positions = _portfolio.Positions.ToDictionary(x => x.InstrumentId, x => x);
             _comissions = _portfolio.Comissions.ToDictionary(x => x.InstrumentId, x => x);
+        }
+
+        private PortfolioBuilder(IEnumerable<Instrument> instruments)
+        {
             _instrumentsByTicker = InstrumentsByTicker(instruments);
         }
 

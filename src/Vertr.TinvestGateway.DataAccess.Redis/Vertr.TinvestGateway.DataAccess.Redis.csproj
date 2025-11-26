@@ -13,6 +13,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Vertr.TinvestGateway.Contracts\Vertr.TinvestGateway.Contracts.csproj" />
+		<ProjectReference Include="..\Vertr.TinvestGateway\Vertr.TinvestGateway.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

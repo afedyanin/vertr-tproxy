@@ -32,9 +32,10 @@ public class OrderRequestRepositoryTests
     public async Task CanSaveOrderRequest()
     {
         var repo = new OrderRequestRepository(_connectionMultiplexer);
-        var orderRequest = CreateOrderRequest();
 
         var portfolioId = Guid.NewGuid();
+        var orderRequest = CreateOrderRequest(portfolioId);
+
         await repo.Save(orderRequest, portfolioId);
         var saved = await repo.Get(orderRequest.RequestId);
         Assert.That(saved, Is.Not.Null);
@@ -46,10 +47,11 @@ public class OrderRequestRepositoryTests
     public async Task CanGetOrderRequestsByPortfolio()
     {
         var repo = new OrderRequestRepository(_connectionMultiplexer);
-        var or1 = CreateOrderRequest();
-        var or2 = CreateOrderRequest();
 
         var portfolioId = Guid.NewGuid();
+        var or1 = CreateOrderRequest(portfolioId);
+        var or2 = CreateOrderRequest(portfolioId);
+
         await repo.Save(or1, portfolioId);
         await repo.Save(or2, portfolioId);
 
@@ -63,12 +65,13 @@ public class OrderRequestRepositoryTests
         }
     }
 
-    private static PostOrderRequest CreateOrderRequest()
+    private static PostOrderRequest CreateOrderRequest(Guid portfolioId)
         => new PostOrderRequest
         {
              AccountId = Guid.NewGuid().ToString(),
              InstrumentId = Guid.NewGuid(),
              RequestId = Guid.NewGuid(),
+             PortfolioId = portfolioId,
              CreatedAt = DateTime.UtcNow,
              OrderDirection = OrderDirection.Buy,
              OrderType = OrderType.Market,

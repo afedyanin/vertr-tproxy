@@ -55,10 +55,10 @@ public class TinvestGatewayController : ControllerBase
         return Ok(candles);
     }
 
-    [HttpPost("orders/{portfolioId:guid}")]
-    public async Task<IActionResult> PostOrder(PostOrderRequest request, Guid portfolioId)
+    [HttpPost("orders")]
+    public async Task<IActionResult> PostOrder(PostOrderRequest request)
     {
-        var response = await _orderExecutionGateway.PostOrder(request, portfolioId);
+        var response = await _orderExecutionGateway.PostOrder(request);
         return Ok(response);
     }
 
