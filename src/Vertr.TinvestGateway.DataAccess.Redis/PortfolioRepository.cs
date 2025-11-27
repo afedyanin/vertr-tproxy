@@ -1,5 +1,5 @@
 ﻿using StackExchange.Redis;
-using Vertr.TinvestGateway.Contracts.Portfolio;
+using Vertr.TinvestGateway.Contracts.Portfolios;
 using Vertr.TinvestGateway.Repositories;
 
 namespace Vertr.TinvestGateway.DataAccess.Redis;

@@ -1,7 +1,7 @@
 ﻿using StackExchange.Redis;
 using Vertr.TinvestGateway.Contracts.Orders;
 using Vertr.TinvestGateway.Contracts.Orders.Enums;
-using Vertr.TinvestGateway.Contracts.Portfolio;
+using Vertr.TinvestGateway.Contracts.Portfolios;
 using Vertr.TinvestGateway.DataAccess.Redis;
 
 namespace Vertr.TinvestGateway.Tests.RedisTests;

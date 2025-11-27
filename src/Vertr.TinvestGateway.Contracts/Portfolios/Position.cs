@@ -1,6 +1,4 @@
-using System.Text.Json;
-
-namespace Vertr.TinvestGateway.Contracts.Portfolio;
+namespace Vertr.TinvestGateway.Contracts.Portfolios;
 
 public record struct Position
 {

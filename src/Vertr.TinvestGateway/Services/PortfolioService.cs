@@ -3,7 +3,7 @@ using Vertr.TinvestGateway.Abstractions;
 using Vertr.TinvestGateway.Contracts.MarketData;
 using Vertr.TinvestGateway.Contracts.Orders;
 using Vertr.TinvestGateway.Contracts.Orders.Enums;
-using Vertr.TinvestGateway.Contracts.Portfolio;
+using Vertr.TinvestGateway.Contracts.Portfolios;
 using Vertr.TinvestGateway.Repositories;
 
 namespace Vertr.TinvestGateway.Services;

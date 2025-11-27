@@ -1,4 +1,4 @@
-﻿using Vertr.TinvestGateway.Contracts.Portfolio;
+﻿using Vertr.TinvestGateway.Contracts.Portfolios;
 
 namespace Vertr.TinvestGateway.Tests.PositionTests;
 

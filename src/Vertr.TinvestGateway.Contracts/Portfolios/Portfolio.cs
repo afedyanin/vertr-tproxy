@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace Vertr.TinvestGateway.Contracts.Portfolio;
+namespace Vertr.TinvestGateway.Contracts.Portfolios;
 public record class Portfolio
 {
     public Guid Id { get; set; }
