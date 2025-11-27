@@ -35,11 +35,11 @@ public class OrderStorageController : ControllerBase
         return Ok(trades);
     }
 
-    [HttpGet("states/{orderId:guid}/{requestId:guid}")]
-    public async Task<IActionResult> GetOrderStates(Guid orderId, Guid requestId)
+    [HttpGet("states")]
+    public async Task<IActionResult> FingOrderStates([FromQuery] string pattern)
     {
-        var states = await _orderStateRepository.GetByIds(orderId.ToString(), requestId.ToString());
-        return Ok(states);
+        var items = await _orderStateRepository.Find(pattern);
+        return Ok(items);
     }
 
     [HttpGet("requests/{portfolioId:guid}")]

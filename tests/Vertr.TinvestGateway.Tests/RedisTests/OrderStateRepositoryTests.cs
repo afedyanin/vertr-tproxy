@@ -24,7 +24,7 @@ public class OrderStateRepositoryTests
     public async Task TearDown()
     {
         var repo = new OrderStateRepository(_connectionMultiplexer);
-        await repo.Clear();
+        //await repo.Clear();
     }
 
     [Test]
@@ -35,10 +35,13 @@ public class OrderStateRepositoryTests
         var s1 = CreateOrderState(orderId.ToString());
 
         await repo.Save(s1);
-        var saved = await repo.Get(s1.Id);
-        Assert.That(saved, Is.Not.Null);
+        var found = await repo.Find($"*{s1.Id}*");
+        Assert.That(found, Is.Not.Null);
 
-        Console.WriteLine(saved);
+        foreach (var item in found)
+        {
+            Console.WriteLine(item);
+        }
     }
 
     [Test]
@@ -52,11 +55,11 @@ public class OrderStateRepositoryTests
         await repo.Save(os1);
         await repo.Save(os2);
 
-        var items = await repo.GetByIds(orderId.ToString());
+        var found = await repo.Find($"*{orderId}*");
 
-        Assert.That(items.Count, Is.EqualTo(2));
+        Assert.That(found.Count, Is.EqualTo(2));
 
-        foreach (var item in items)
+        foreach (var item in found)
         {
             Console.WriteLine(item);
         }
@@ -76,11 +79,17 @@ public class OrderStateRepositoryTests
         await repo.Save(os2);
         await repo.Save(os3);
 
-        var items = await repo.GetByIds(orderId.ToString(), requestId.ToString());
+        var foundbyOrderId = await repo.Find($"*{orderId}*");
+        Assert.That(foundbyOrderId.Count, Is.EqualTo(2));
+        foreach (var item in foundbyOrderId)
+        {
+            Console.WriteLine(item);
+        }
 
-        Assert.That(items.Count, Is.EqualTo(3));
+        var foundbyRequestId = await repo.Find($"*{requestId}*");
+        Assert.That(foundbyRequestId.Count, Is.EqualTo(2));
 
-        foreach (var item in items)
+        foreach (var item in foundbyRequestId)
         {
             Console.WriteLine(item);
         }

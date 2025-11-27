@@ -27,13 +27,14 @@ public class SimpleRedisTests
         var redis = ConnectionMultiplexer.Connect("localhost");
         var sub = redis.GetSubscriber();
 
-        sub.Subscribe("messages").OnMessage(async channelMessage => 
+        var cahnnel = new RedisChannel("messages", RedisChannel.PatternMode.Literal);
+        sub.Subscribe(cahnnel).OnMessage(async channelMessage => 
         {
             await Task.Delay(1000);
             Console.WriteLine(channelMessage.Message);
         });
 
-        sub.Publish("messages", "hello");
+        sub.Publish(cahnnel, "hello");
 
         await Task.Delay(5000);
 
