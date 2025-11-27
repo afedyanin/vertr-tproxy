@@ -8,6 +8,7 @@ internal class PortfolioRepository : RedisRepositoryBase, IPortfolioRepository
 {
     private static readonly string _portfoliosKey = "portfolios";
     private static readonly string _orderToPortfolioKey = "portfolios.orders";
+    private static readonly RedisChannel _portfolioChannel = new RedisChannel(_portfoliosKey, RedisChannel.PatternMode.Literal);
 
     public PortfolioRepository(IConnectionMultiplexer connectionMultiplexer) : base(connectionMultiplexer)
     {
@@ -16,8 +17,12 @@ internal class PortfolioRepository : RedisRepositoryBase, IPortfolioRepository
     public async Task Save(Portfolio portfolio)
     {
         var db = GetDatabase();
-        var portfolioEntry = new HashEntry(portfolio.Id.ToString(), portfolio.ToJson());
-        await db.HashSetAsync(_portfoliosKey, [portfolioEntry]);
+        var json = portfolio.ToJson();
+        var portfolioEntry = new HashEntry(portfolio.Id.ToString(), json);
+
+        await Task.WhenAll(
+            db.HashSetAsync(_portfoliosKey, [portfolioEntry]),
+            db.PublishAsync(_portfolioChannel, json));
     }
 
     public async Task<Portfolio?> GetById(Guid portfolioId)

@@ -15,14 +15,31 @@ internal class CandlestickRepository : RedisRepositoryBase, ICandlestickReposito
 
     public async Task<long> Save(Guid instrumentId, Candlestick[] candles, int maxCount = 0)
     {
+        var trimmedCandles = maxCount > 0 ?
+            candles.OrderBy(c => c.Time).TakeLast(maxCount) :
+            candles;
+
+        var db = GetDatabase();
+        var key = GetKey(instrumentId);
+
         if (maxCount > 0)
         {
-            return await SaveWithOverride(instrumentId, candles, maxCount);
+            var currentItemsCount = await db.SortedSetLengthAsync(key);
+            var toRemove = (currentItemsCount + trimmedCandles.Count()) - maxCount;
+
+            if (toRemove > 0)
+            {
+                var removed = await db.SortedSetRemoveRangeByRankAsync(key, 0, toRemove - 1);
+            }
         }
 
-        var entries = candles.Select(c => new SortedSetEntry(c.ToJson(), c.Time)).ToArray();
-        var db = GetDatabase();
+        var entries = trimmedCandles.Select(c => new SortedSetEntry(c.ToJson(), c.Time)).ToArray();
         var added = await db.SortedSetAddAsync(GetKey(instrumentId), entries);
+
+        // publish last candle
+        var last = trimmedCandles.OrderBy(c => c.Time).Last();
+        var channel = new RedisChannel(key.ToString(), RedisChannel.PatternMode.Pattern);
+        await db.PublishAsync(channel, last.ToJson());
 
         return added;
     }
@@ -35,34 +52,6 @@ internal class CandlestickRepository : RedisRepositoryBase, ICandlestickReposito
 
     public Task<bool> Clear(Guid instrumentId)
         => GetDatabase().KeyDeleteAsync(GetKey(instrumentId));
-
-    internal async Task<long> RemoveLast(Guid instrumentId, long stopIndex)
-    {
-        var removed = await GetDatabase().SortedSetRemoveRangeByRankAsync(GetKey(instrumentId), 0, stopIndex);
-        return removed;
-    }
-
-    internal async Task<long> SaveWithOverride(Guid instrumentId, Candlestick[] candles, int maxCount)
-    {
-        Debug.Assert(maxCount > 0);
-
-        var key = GetKey(instrumentId);
-        var db = GetDatabase();
-
-        var candlesTrimmed = candles.OrderBy(c => c.Time).TakeLast(maxCount).ToArray();
-        var currentItemsCount = await db.SortedSetLengthAsync(key);
-        var toRemove = (currentItemsCount + candlesTrimmed.Length) - maxCount;
-
-        if (toRemove > 0)
-        {
-            await RemoveLast(instrumentId, toRemove - 1);
-        }
-
-        var entries = candlesTrimmed.Select(c => new SortedSetEntry(c.ToJson(), c.Time)).ToArray();
-        var added = await db.SortedSetAddAsync(key, entries);
-
-        return added;
-    }
 
     private static RedisKey GetKey(Guid instrumentId) => new($"{_prefixKey}.{instrumentId}");
 }

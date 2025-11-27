@@ -157,19 +157,6 @@ namespace Vertr.TinvestGateway.Tests.RedisTests
             Assert.Pass();
         }
 
-        [Test]
-        public async Task CanRemoveCandles()
-        {
-            var repo = new CandlestickRepository(_connectionMultiplexer);
-            var startTime = new DateTime(2025, 11, 24, 10, 3, 0);
-            var items = GenerateCandles(startTime, 5, 290, 3);
-            var savedCount = await repo.Save(_sberId, items);
-
-            var removed = await repo.RemoveLast(_sberId, 10);
-
-            Assert.That(removed, Is.GreaterThan(0));
-        }
-
         private static Candlestick[] GenerateCandles(DateTime startTime, int count, decimal mean, decimal stdDev)
         {
             var nr = new NormalRandom((double)mean, (double)stdDev);

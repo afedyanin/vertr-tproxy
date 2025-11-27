@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vertr.TinvestGateway.Tests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vertr.TinvestGateway.DataAccess.Redis", "src\Vertr.TinvestGateway.DataAccess.Redis\Vertr.TinvestGateway.DataAccess.Redis.csproj", "{60416B29-D63B-4355-8787-B8AC2A4D4FB0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vertr.TinvestGateway.TradingConsole", "src\Vertr.TinvestGateway.TradingConsole\Vertr.TinvestGateway.TradingConsole.csproj", "{C5716A1B-CBEC-4302-A88D-8644C1DFC943}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{60416B29-D63B-4355-8787-B8AC2A4D4FB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60416B29-D63B-4355-8787-B8AC2A4D4FB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60416B29-D63B-4355-8787-B8AC2A4D4FB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5716A1B-CBEC-4302-A88D-8644C1DFC943}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5716A1B-CBEC-4302-A88D-8644C1DFC943}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5716A1B-CBEC-4302-A88D-8644C1DFC943}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5716A1B-CBEC-4302-A88D-8644C1DFC943}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,6 +67,7 @@ Global
 		{679FC110-B319-C39D-F1AF-403EF9F40487} = {DFBB32DB-3010-439F-AC6A-BFAFFC0C4C08}
 		{3C52BF5B-4873-AE4C-A860-26F52C14143C} = {13DDA2F8-6001-4EA2-B461-8664A7B3D954}
 		{60416B29-D63B-4355-8787-B8AC2A4D4FB0} = {DFBB32DB-3010-439F-AC6A-BFAFFC0C4C08}
+		{C5716A1B-CBEC-4302-A88D-8644C1DFC943} = {DFBB32DB-3010-439F-AC6A-BFAFFC0C4C08}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9261A401-9B4D-41D6-9DDE-3A6B02B4190F}
