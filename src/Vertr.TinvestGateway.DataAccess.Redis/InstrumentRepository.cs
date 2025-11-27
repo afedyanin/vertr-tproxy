@@ -7,7 +7,6 @@ namespace Vertr.TinvestGateway.DataAccess.Redis;
 internal class InstrumentRepository : RedisRepositoryBase, IInstrumentRepository
 {
     private static readonly string _instrumentsKey = "market.instruments";
-    private static readonly string _symbolsKey = "market.symbols";
 
     public InstrumentRepository(IConnectionMultiplexer connectionMultiplexer) : base(connectionMultiplexer)
     {
@@ -17,12 +16,7 @@ internal class InstrumentRepository : RedisRepositoryBase, IInstrumentRepository
     {
         var instrumentEntry = new HashEntry(instrument.Id.ToString(), instrument.ToJson());
         var symbolEntry = new HashEntry(instrument.Ticker, instrument.Id.ToString());
-
-        var db = GetDatabase();
-
-        await Task.WhenAll(
-            db.HashSetAsync(_instrumentsKey, [instrumentEntry]),
-            db.HashSetAsync(_symbolsKey, [symbolEntry]));
+        await GetDatabase().HashSetAsync(_instrumentsKey, [instrumentEntry]);
     }
 
     public async Task<IEnumerable<Instrument>> GetAll()
@@ -68,29 +62,6 @@ internal class InstrumentRepository : RedisRepositoryBase, IInstrumentRepository
         return restored;
     }
 
-    public async Task<Instrument?> GetByTicker(string ticker)
-    {
-        var istrumentIdEntry = await GetDatabase().HashGetAsync(_symbolsKey, ticker);
-
-        if (istrumentIdEntry.IsNullOrEmpty)
-        {
-            return null;
-        }
-
-        if (!Guid.TryParse(istrumentIdEntry.ToString(), out var instrumentId))
-        {
-            return null;
-        }
-
-        return await Get(instrumentId);
-    }
-
-    public async Task Clear()
-    {
-        var db = GetDatabase();
-
-        await Task.WhenAll(
-            db.KeyDeleteAsync(_instrumentsKey),
-            db.KeyDeleteAsync(_symbolsKey));
-    }
+    public Task Clear()
+        => GetDatabase().KeyDeleteAsync(_instrumentsKey);
 }

@@ -42,20 +42,6 @@ namespace Vertr.TinvestGateway.Tests.RedisTests
         }
 
         [Test]
-        public async Task CanGetInstrumentByTicker()
-        {
-            var repo = new InstrumentRepository(_connectionMultiplexer);
-            var instrument = CreateInstrument();
-
-            await repo.Save(instrument);
-
-            var item = await repo.GetByTicker(instrument.Ticker);
-
-            Assert.That(item, Is.Not.Null);
-            Console.WriteLine(item);
-        }
-
-        [Test]
         public async Task CanChangeInstrumentDetails()
         {
             var repo = new InstrumentRepository(_connectionMultiplexer);
@@ -65,7 +51,7 @@ namespace Vertr.TinvestGateway.Tests.RedisTests
             instrument.LotSize = 987;
             await repo.Save(instrument);
 
-            var item = await repo.GetByTicker(instrument.Ticker);
+            var item = await repo.Get(instrument.Id);
 
             Assert.That(item, Is.Not.Null);
             Assert.That(item.LotSize, Is.EqualTo(instrument.LotSize));
