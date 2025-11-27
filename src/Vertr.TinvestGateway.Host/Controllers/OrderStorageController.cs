@@ -28,10 +28,10 @@ public class OrderStorageController : ControllerBase
         _portfolioRepository = portfolioRepository;
     }
 
-    [HttpGet("trades/{orderId:guid}")]
-    public async Task<IActionResult> GetOrderTrades(Guid orderId)
+    [HttpGet("trades")]
+    public async Task<IActionResult> FindOrderTrades([FromQuery] string pattern)
     {
-        var trades = await _orderTradeRepository.GetByOrderId(orderId.ToString());
+        var trades = await _orderTradeRepository.Find(pattern);
         return Ok(trades);
     }
 
@@ -81,7 +81,7 @@ public class OrderStorageController : ControllerBase
 
         return Ok(response);
     }
-
+    /*
     [HttpGet("portfolio-trades/{portfolioId:guid}")]
     public async Task<IActionResult> GetPortfolioTrades(Guid portfolioId)
     {
@@ -98,6 +98,7 @@ public class OrderStorageController : ControllerBase
 
         return Ok(allTrades.ToArray());
     }
+    */
 
     [HttpGet("portfolio/{portfolioId:guid}")]
     public async Task<IActionResult> GetPortfolio(Guid portfolioId)

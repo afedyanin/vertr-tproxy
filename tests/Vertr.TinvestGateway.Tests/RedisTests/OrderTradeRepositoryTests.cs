@@ -36,7 +36,7 @@ public class OrderTradeRepositoryTests
         var trades = CreateOrderTrades(Guid.NewGuid());
 
         await repo.Save(trades);
-        var saved = await repo.Get(trades.Id);
+        var saved = await repo.Find($"*{trades.Id}*");
         Assert.That(saved, Is.Not.Null);
 
         Console.WriteLine(saved);
@@ -53,7 +53,7 @@ public class OrderTradeRepositoryTests
         await repo.Save(ot1);
         await repo.Save(ot2);
 
-        var items = await repo.GetByOrderId(orderId.ToString());
+        var items = await repo.Find($"*{orderId}*");
 
         Assert.That(items.Count, Is.EqualTo(2));
 
