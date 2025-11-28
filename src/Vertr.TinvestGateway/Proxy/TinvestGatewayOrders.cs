@@ -37,7 +37,7 @@ internal class TinvestGatewayOrders : TinvestGatewayBase, IOrderExecutionGateway
             var tRequest = request.Convert();
             var response = await InvestApiClient.Orders.PostOrderAsync(tRequest);
             var orderResponse = response.Convert();
-            await _orderResponseRepository.Save(orderResponse, request.PortfolioId);
+            await _orderResponseRepository.Save(orderResponse);
             await _portfolioService.Update(orderResponse, request.PortfolioId);
 
             return orderResponse;

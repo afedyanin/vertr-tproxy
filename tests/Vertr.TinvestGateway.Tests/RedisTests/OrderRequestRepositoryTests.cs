@@ -43,28 +43,6 @@ public class OrderRequestRepositoryTests
         Console.WriteLine(saved);
     }
 
-    [Test]
-    public async Task CanGetOrderRequestsByPortfolio()
-    {
-        var repo = new OrderRequestRepository(_connectionMultiplexer);
-
-        var portfolioId = Guid.NewGuid();
-        var or1 = CreateOrderRequest(portfolioId);
-        var or2 = CreateOrderRequest(portfolioId);
-
-        await repo.Save(or1, portfolioId);
-        await repo.Save(or2, portfolioId);
-
-        var items = await repo.GetByPortfolioId(portfolioId);
-
-        Assert.That(items.Count, Is.EqualTo(2));
-
-        foreach (var item in items)
-        {
-            Console.WriteLine(item);
-        }
-    }
-
     private static PostOrderRequest CreateOrderRequest(Guid portfolioId)
         => new PostOrderRequest
         {

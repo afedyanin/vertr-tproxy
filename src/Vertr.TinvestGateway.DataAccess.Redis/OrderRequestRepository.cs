@@ -6,9 +6,7 @@ namespace Vertr.TinvestGateway.DataAccess.Redis;
 
 internal class OrderRequestRepository : RedisRepositoryBase, IOrderRequestRepository
 {
-    private static readonly string _requestsKey = "orders.requests";
-    private static readonly string _requestsByPortfolioKey = "orders.requests.by-portfolio";
-    private static readonly string _requestsAllPortfoliosKey = "orders.requests.all-portfolios";
+    private static readonly string _requestsKey = "order.requests";
 
     public OrderRequestRepository(IConnectionMultiplexer connectionMultiplexer) : base(connectionMultiplexer)
     {
@@ -16,14 +14,8 @@ internal class OrderRequestRepository : RedisRepositoryBase, IOrderRequestReposi
 
     public async Task Save(PostOrderRequest orderRequest, Guid portfolioId)
     {
-        var db = GetDatabase();
         var requestEntry = new HashEntry(orderRequest.RequestId.ToString(), orderRequest.ToJson());
-        var portfolioKey = GetPortfolioRequestKey(portfolioId.ToString());
-
-        await Task.WhenAll(
-            db.HashSetAsync(_requestsKey, [requestEntry]),
-            db.ListRightPushAsync(portfolioKey, orderRequest.RequestId.ToString()),
-            db.SetAddAsync(_requestsAllPortfoliosKey, portfolioId.ToString()));
+        await GetDatabase().HashSetAsync(_requestsKey, [requestEntry]);
     }
 
     public async Task<PostOrderRequest?> Get(Guid id)
@@ -39,62 +31,29 @@ internal class OrderRequestRepository : RedisRepositoryBase, IOrderRequestReposi
         return restored;
     }
 
-    public async Task<IEnumerable<PostOrderRequest>> GetByPortfolioId(Guid portfolioId)
+    public async Task<IEnumerable<PostOrderRequest?>> Find(string pattern)
     {
-        var db = GetDatabase();
-        var portfolioKey = GetPortfolioRequestKey(portfolioId.ToString());
-        var requestIds = await db.ListRangeAsync(portfolioKey);
-
-        if (requestIds == null || requestIds.Length <= 0)
-        {
-            return [];
-        }
-
         var res = new List<PostOrderRequest>();
 
-        foreach (var requestId in requestIds)
+        await foreach (var entry in GetDatabase().HashScanAsync(_requestsKey, pattern))
         {
-            var entry = await db.HashGetAsync(_requestsKey, requestId.ToString());
-
-            if (entry.IsNullOrEmpty)
+            if (entry.Value.IsNullOrEmpty)
             {
                 continue;
             }
 
-            var item = PostOrderRequest.FromJson(entry.ToString());
-
-            if (item == null)
+            var restored = PostOrderRequest.FromJson(entry.Value.ToString());
+            if (restored == null)
             {
                 continue;
             }
 
-            res.Add(item);
+            res.Add(restored);
         }
 
         return res;
     }
 
-    public async Task Clear()
-    {
-        var db = GetDatabase();
-
-        var allPortfolioKeys = db.SetMembers(_requestsAllPortfoliosKey);
-
-        foreach (var key in allPortfolioKeys)
-        {
-            if (key.IsNullOrEmpty)
-            {
-                continue;
-            }
-
-            var portfolioKey = GetPortfolioRequestKey(key.ToString());
-            await db.KeyDeleteAsync(portfolioKey);
-        }
-
-        await Task.WhenAll(
-            db.KeyDeleteAsync(_requestsKey),
-            db.KeyDeleteAsync(_requestsAllPortfoliosKey));
-    }
-
-    private static RedisKey GetPortfolioRequestKey(string portfolioId) => new($"{_requestsByPortfolioKey}.{portfolioId}");
+    public Task Clear() =>
+        GetDatabase().KeyDeleteAsync(_requestsKey);
 }

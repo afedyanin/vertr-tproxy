@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Vertr.TinvestGateway.Contracts.Orders;
 using Vertr.TinvestGateway.Repositories;
 
 namespace Vertr.TinvestGateway.Host.Controllers;
@@ -42,14 +41,14 @@ public class OrderStorageController : ControllerBase
         return Ok(items);
     }
 
-    [HttpGet("requests/{portfolioId:guid}")]
-    public async Task<IActionResult> GetOrderRquests(Guid portfolioId)
+    [HttpGet("requests")]
+    public async Task<IActionResult> FindOrderRquests([FromQuery] string pattern)
     {
-        var requests = await _orderRequestRepository.GetByPortfolioId(portfolioId);
+        var requests = await _orderRequestRepository.Find(pattern);
         return Ok(requests);
     }
 
-    [HttpGet("order-request/{requestId:guid}")]
+    [HttpGet("requests/{requestId:guid}")]
     public async Task<IActionResult> GetOrderRquest(Guid requestId)
     {
         var request = await _orderRequestRepository.Get(requestId);
@@ -62,14 +61,16 @@ public class OrderStorageController : ControllerBase
         return Ok(request);
     }
 
-    [HttpGet("responses/{portfolioId:guid}")]
-    public async Task<IActionResult> GetOrderResponses(Guid portfolioId)
+    [HttpGet("responses")]
+    public async Task<IActionResult> FindOrderResponses([FromQuery] string pattern)
     {
-        var responses = await _orderResponseRepository.GetByPortfolioId(portfolioId);
+        var responses = await _orderResponseRepository.Find(pattern);
         return Ok(responses);
     }
 
-    [HttpGet("order-response/{orderId:guid}")]
+
+
+    [HttpGet("responses/{orderId:guid}")]
     public async Task<IActionResult> GetOrderResponse(Guid orderId)
     {
         var response = await _orderResponseRepository.Get(orderId);
@@ -81,24 +82,6 @@ public class OrderStorageController : ControllerBase
 
         return Ok(response);
     }
-    /*
-    [HttpGet("portfolio-trades/{portfolioId:guid}")]
-    public async Task<IActionResult> GetPortfolioTrades(Guid portfolioId)
-    {
-        var responses = await _orderResponseRepository.GetByPortfolioId(portfolioId);
-        var orderIds = responses.Select(x => x.OrderId);
-
-        var allTrades = new List<OrderTrades>();
-
-        foreach (var orderId in orderIds)
-        {
-            var trades = await _orderTradeRepository.GetByOrderId(orderId.ToString());
-            allTrades.AddRange(trades);
-        }
-
-        return Ok(allTrades.ToArray());
-    }
-    */
 
     [HttpGet("portfolio/{portfolioId:guid}")]
     public async Task<IActionResult> GetPortfolio(Guid portfolioId)
