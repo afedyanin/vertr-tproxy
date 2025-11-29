@@ -1,5 +1,7 @@
-using Vertr.TinvestGateway.Host.BackgroundServices;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Vertr.TinvestGateway.DataAccess.Redis;
+using Vertr.TinvestGateway.Host.BackgroundServices;
 
 namespace Vertr.TinvestGateway.Host;
 
@@ -11,7 +13,13 @@ public class Program
 
         var configuration = builder.Configuration;
 
-        builder.Services.AddControllers();
+        builder.Services.AddControllers()
+          .AddJsonOptions(options =>
+          {
+              options.JsonSerializerOptions.WriteIndented = true;
+              options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+              options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+          });
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
@@ -23,14 +31,10 @@ public class Program
         builder.Services.AddHostedService<OrderTradesStreamService>();
         builder.Services.AddHostedService<OrderStateStreamService>();
 
-
         var app = builder.Build();
 
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+        app.UseSwagger();
+        app.UseSwaggerUI();
 
         app.UseHttpsRedirection();
 

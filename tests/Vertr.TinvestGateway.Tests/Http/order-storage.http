@@ -1,8 +1,7 @@
-﻿@baseUrl = http://localhost:5099/api/order-storage
+﻿@baseUrl = https://localhost:7132/api/tinvest
+
 @portfolioId = 2492B82B-5D8A-48F8-B72F-6FE76C9FE5DB
-
 @orderId = da556e67-8507-4bd0-858a-d6ee29caa953
-
 @requestId = db7fb9b3-b6f7-40f1-9c40-aa58e7c06538
 
 ### Requests

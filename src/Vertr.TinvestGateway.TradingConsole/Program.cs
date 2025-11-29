@@ -23,7 +23,13 @@ internal class Program
     {
         _connection = ConnectionMultiplexer.Connect("localhost");
         _subscriber = _connection.GetSubscriber();
-        _gatewayClient = RestService.For<ITinvestGatewayClient>("https://localhost:7132");
+
+        _gatewayClient = RestService.For<ITinvestGatewayClient>(
+            "https://localhost:7132", 
+            new RefitSettings
+            {
+                ContentSerializer = new SystemTextJsonContentSerializer(JsonOptions.DefaultOptions)
+            });
 
         var candlesChannel = new RedisChannel("market.candles*", PatternMode.Pattern);
         await _subscriber.SubscribeAsync(candlesChannel, async (ch, message) =>
