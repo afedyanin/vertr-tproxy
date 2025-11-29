@@ -1,4 +1,4 @@
-﻿using Vertr.TinvestGateway.Abstractions;
+using Vertr.TinvestGateway.Abstractions;
 using Vertr.TinvestGateway.Contracts.MarketData;
 using Vertr.TinvestGateway.Repositories;
 

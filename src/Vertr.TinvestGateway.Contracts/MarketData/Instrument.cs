@@ -16,4 +16,3 @@ public record class Instrument
 
     public static Instrument? FromJson(string json) => JsonSerializer.Deserialize<Instrument>(json, JsonOptions.DefaultOptions);
 }
-

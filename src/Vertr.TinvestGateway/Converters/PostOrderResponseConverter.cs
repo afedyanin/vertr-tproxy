@@ -1,6 +1,7 @@
 using Vertr.TinvestGateway.Contracts.Orders;
 
 namespace Vertr.TinvestGateway.Converters;
+
 internal static class PostOrderResponseConverter
 {
     public static PostOrderResponse Convert(

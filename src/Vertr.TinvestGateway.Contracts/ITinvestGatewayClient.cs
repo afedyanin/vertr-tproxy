@@ -1,4 +1,4 @@
-﻿using Refit;
+using Refit;
 using Vertr.TinvestGateway.Contracts.Orders;
 using Vertr.TinvestGateway.Contracts.Portfolios;
 

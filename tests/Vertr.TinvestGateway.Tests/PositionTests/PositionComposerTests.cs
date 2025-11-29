@@ -1,4 +1,4 @@
-﻿using Vertr.TinvestGateway.Contracts.Portfolios;
+using Vertr.TinvestGateway.Contracts.Portfolios;
 
 namespace Vertr.TinvestGateway.Tests.PositionTests;
 
@@ -12,7 +12,7 @@ public class PositionComposerTests
         var grouped = items.GroupBy(m => m.Currency).Select(g => new Position
         {
             InstrumentId = Guid.NewGuid(),
-            Balance = g.Sum(o => o.Value) 
+            Balance = g.Sum(o => o.Value)
         });
 
         foreach (var item in grouped)

@@ -3,6 +3,7 @@ using Vertr.TinvestGateway.Contracts.Orders.Enums;
 using Vertr.TinvestGateway.Contracts.Portfolios;
 
 namespace Vertr.TinvestGateway.Contracts.Orders;
+
 public record class PostOrderResponse
 {
     public string OrderId { get; init; } = string.Empty;

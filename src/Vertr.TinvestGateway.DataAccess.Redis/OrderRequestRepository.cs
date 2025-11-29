@@ -1,4 +1,4 @@
-﻿using StackExchange.Redis;
+using StackExchange.Redis;
 using Vertr.TinvestGateway.Contracts.Orders;
 using Vertr.TinvestGateway.Repositories;
 
@@ -6,7 +6,7 @@ namespace Vertr.TinvestGateway.DataAccess.Redis;
 
 internal class OrderRequestRepository : RedisRepositoryBase, IOrderRequestRepository
 {
-    private static readonly string _requestsKey = "order.requests";
+    private const string RequestsKey = "order.requests";
 
     public OrderRequestRepository(IConnectionMultiplexer connectionMultiplexer) : base(connectionMultiplexer)
     {
@@ -15,12 +15,12 @@ internal class OrderRequestRepository : RedisRepositoryBase, IOrderRequestReposi
     public async Task Save(PostOrderRequest orderRequest, Guid portfolioId)
     {
         var requestEntry = new HashEntry(orderRequest.RequestId.ToString(), orderRequest.ToJson());
-        await GetDatabase().HashSetAsync(_requestsKey, [requestEntry]);
+        await GetDatabase().HashSetAsync(RequestsKey, [requestEntry]);
     }
 
     public async Task<PostOrderRequest?> Get(Guid id)
     {
-        var entry = await GetDatabase().HashGetAsync(_requestsKey, id.ToString());
+        var entry = await GetDatabase().HashGetAsync(RequestsKey, id.ToString());
 
         if (entry.IsNullOrEmpty)
         {
@@ -35,7 +35,7 @@ internal class OrderRequestRepository : RedisRepositoryBase, IOrderRequestReposi
     {
         var res = new List<PostOrderRequest>();
 
-        await foreach (var entry in GetDatabase().HashScanAsync(_requestsKey, pattern))
+        await foreach (var entry in GetDatabase().HashScanAsync(RequestsKey, pattern))
         {
             if (entry.Value.IsNullOrEmpty)
             {
@@ -55,5 +55,5 @@ internal class OrderRequestRepository : RedisRepositoryBase, IOrderRequestReposi
     }
 
     public Task Clear() =>
-        GetDatabase().KeyDeleteAsync(_requestsKey);
+        GetDatabase().KeyDeleteAsync(RequestsKey);
 }

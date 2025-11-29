@@ -1,4 +1,4 @@
-﻿using StackExchange.Redis;
+using StackExchange.Redis;
 using Vertr.TinvestGateway.Contracts.Orders;
 using Vertr.TinvestGateway.Repositories;
 
@@ -6,7 +6,7 @@ namespace Vertr.TinvestGateway.DataAccess.Redis;
 
 internal class OrderStateRepository : RedisRepositoryBase, IOrderStateRepository
 {
-    private static readonly string _statesKey = "order.states";
+    private const string StatesKey = "order.states";
 
     public OrderStateRepository(IConnectionMultiplexer connectionMultiplexer) : base(connectionMultiplexer)
     {
@@ -15,20 +15,20 @@ internal class OrderStateRepository : RedisRepositoryBase, IOrderStateRepository
     public async Task Save(OrderState orderState)
     {
         var stateEntry = new HashEntry(GetEntryKey(orderState), orderState.ToJson());
-        await GetDatabase().HashSetAsync(_statesKey, [stateEntry]);
+        await GetDatabase().HashSetAsync(StatesKey, [stateEntry]);
     }
 
     public async Task<IEnumerable<OrderState?>> Find(string pattern)
     {
         var res = new List<OrderState>();
 
-        await foreach(var entry in GetDatabase().HashScanAsync(_statesKey, pattern))
+        await foreach (var entry in GetDatabase().HashScanAsync(StatesKey, pattern))
         {
             if (entry.Value.IsNullOrEmpty)
             {
                 continue;
             }
-            
+
             var restored = OrderState.FromJson(entry.Value.ToString());
             if (restored == null)
             {
@@ -42,14 +42,14 @@ internal class OrderStateRepository : RedisRepositoryBase, IOrderStateRepository
     }
 
     public Task Clear()
-        => GetDatabase().KeyDeleteAsync(_statesKey);
+        => GetDatabase().KeyDeleteAsync(StatesKey);
 
     private static string GetEntryKey(OrderState orderState)
     {
         var emptyId = Guid.Empty.ToString();
-        var orderId = string.IsNullOrEmpty(orderState.OrderId) ? 
+        var orderId = string.IsNullOrEmpty(orderState.OrderId) ?
             emptyId : orderState.OrderId;
-        
+
         var requestId = string.IsNullOrEmpty(orderState.OrderRequestId) ?
             emptyId : orderState.OrderRequestId;
 

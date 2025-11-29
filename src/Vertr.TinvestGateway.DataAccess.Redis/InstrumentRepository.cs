@@ -1,4 +1,4 @@
-﻿using StackExchange.Redis;
+using StackExchange.Redis;
 using Vertr.TinvestGateway.Contracts.MarketData;
 using Vertr.TinvestGateway.Repositories;
 
@@ -6,7 +6,7 @@ namespace Vertr.TinvestGateway.DataAccess.Redis;
 
 internal class InstrumentRepository : RedisRepositoryBase, IInstrumentRepository
 {
-    private static readonly string _instrumentsKey = "market.instruments";
+    private const string InstrumentsKey = "market.instruments";
 
     public InstrumentRepository(IConnectionMultiplexer connectionMultiplexer) : base(connectionMultiplexer)
     {
@@ -15,13 +15,12 @@ internal class InstrumentRepository : RedisRepositoryBase, IInstrumentRepository
     public async Task Save(Instrument instrument)
     {
         var instrumentEntry = new HashEntry(instrument.Id.ToString(), instrument.ToJson());
-        var symbolEntry = new HashEntry(instrument.Ticker, instrument.Id.ToString());
-        await GetDatabase().HashSetAsync(_instrumentsKey, [instrumentEntry]);
+        await GetDatabase().HashSetAsync(InstrumentsKey, [instrumentEntry]);
     }
 
     public async Task<IEnumerable<Instrument>> GetAll()
     {
-        var entries = await GetDatabase().HashGetAllAsync(_instrumentsKey);
+        var entries = await GetDatabase().HashGetAllAsync(InstrumentsKey);
         var res = new List<Instrument>();
 
         if (entries == null)
@@ -51,7 +50,7 @@ internal class InstrumentRepository : RedisRepositoryBase, IInstrumentRepository
 
     public async Task<Instrument?> Get(Guid id)
     {
-        var entry = await GetDatabase().HashGetAsync(_instrumentsKey, id.ToString());
+        var entry = await GetDatabase().HashGetAsync(InstrumentsKey, id.ToString());
 
         if (entry.IsNullOrEmpty)
         {
@@ -63,5 +62,5 @@ internal class InstrumentRepository : RedisRepositoryBase, IInstrumentRepository
     }
 
     public Task Clear()
-        => GetDatabase().KeyDeleteAsync(_instrumentsKey);
+        => GetDatabase().KeyDeleteAsync(InstrumentsKey);
 }

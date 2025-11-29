@@ -1,5 +1,4 @@
-﻿using StackExchange.Redis;
-using System.Diagnostics;
+using StackExchange.Redis;
 using Vertr.TinvestGateway.Contracts.MarketData;
 using Vertr.TinvestGateway.Repositories;
 
@@ -7,7 +6,7 @@ namespace Vertr.TinvestGateway.DataAccess.Redis;
 
 internal class CandlestickRepository : RedisRepositoryBase, ICandlestickRepository
 {
-    private static readonly string _prefixKey = "market.candles";
+    private const string PrefixKey = "market.candles";
 
     public CandlestickRepository(IConnectionMultiplexer connectionMultiplexer) : base(connectionMultiplexer)
     {
@@ -15,9 +14,7 @@ internal class CandlestickRepository : RedisRepositoryBase, ICandlestickReposito
 
     public async Task<long> Save(Guid instrumentId, Candlestick[] candles, int maxCount = 0)
     {
-        var trimmedCandles = maxCount > 0 ?
-            candles.OrderBy(c => c.Time).TakeLast(maxCount) :
-            candles;
+        var trimmedCandles = maxCount > 0 ? candles.OrderBy(c => c.Time).TakeLast(maxCount) : candles;
 
         var db = GetDatabase();
         var key = GetKey(instrumentId);
@@ -53,5 +50,5 @@ internal class CandlestickRepository : RedisRepositoryBase, ICandlestickReposito
     public Task<bool> Clear(Guid instrumentId)
         => GetDatabase().KeyDeleteAsync(GetKey(instrumentId));
 
-    private static RedisKey GetKey(Guid instrumentId) => new($"{_prefixKey}.{instrumentId}");
+    private static RedisKey GetKey(Guid instrumentId) => new($"{PrefixKey}.{instrumentId}");
 }

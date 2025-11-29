@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Vertr.TinvestGateway.Repositories;
 
 namespace Vertr.TinvestGateway.Host.Controllers;
@@ -20,7 +20,7 @@ public class OrderStorageController : ControllerBase
         IOrderResponseRepository orderResponseRepository,
         IPortfolioRepository portfolioRepository)
     {
-        _orderTradeRepository  = orderTradeRepository;
+        _orderTradeRepository = orderTradeRepository;
         _orderStateRepository = orderStateRepository;
         _orderRequestRepository = orderRequestRepository;
         _orderResponseRepository = orderResponseRepository;
@@ -77,7 +77,7 @@ public class OrderStorageController : ControllerBase
 
         if (response == null)
         {
-            return NotFound(); 
+            return NotFound();
         }
 
         return Ok(response);
@@ -90,7 +90,7 @@ public class OrderStorageController : ControllerBase
 
         if (portfolio == null)
         {
-            return NotFound(); 
+            return NotFound();
         }
 
         return Ok(portfolio);

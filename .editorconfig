@@ -1,0 +1,8 @@
+[*.cs]
+dotnet_diagnostic.IDE0009.severity = none
+dotnet_diagnostic.IDE0040.severity = none
+dotnet_diagnostic.CA1027.severity = none
+dotnet_diagnostic.CA2254.severity = none # The logging message template should not vary between calls.
+
+
+

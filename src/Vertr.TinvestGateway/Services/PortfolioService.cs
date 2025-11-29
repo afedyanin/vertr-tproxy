@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Vertr.TinvestGateway.Abstractions;
 using Vertr.TinvestGateway.Contracts.MarketData;
 using Vertr.TinvestGateway.Contracts.Orders;
@@ -15,7 +15,7 @@ internal class PortfolioService : IPortfolioService
     private readonly IInstrumentProvider _instrumentProvider;
     private readonly ILogger<PortfolioService> _logger;
 
-    private static SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+    private static readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1, 1);
 
     public PortfolioService(
         IPortfolioRepository portfolioRepository,
@@ -32,7 +32,7 @@ internal class PortfolioService : IPortfolioService
     public async Task Update(PostOrderResponse orderResponse, Guid portfolioId)
     {
         await _portfolioRepository.BindOrderToPortfolio(orderResponse.OrderId, portfolioId);
-        await _semaphore.WaitAsync();
+        await Semaphore.WaitAsync();
 
         try
         {
@@ -42,7 +42,7 @@ internal class PortfolioService : IPortfolioService
         }
         finally
         {
-            _semaphore.Release();
+            Semaphore.Release();
         }
     }
 
@@ -56,7 +56,7 @@ internal class PortfolioService : IPortfolioService
             return;
         }
 
-        await _semaphore.WaitAsync();
+        await Semaphore.WaitAsync();
 
         try
         {
@@ -66,7 +66,7 @@ internal class PortfolioService : IPortfolioService
         }
         finally
         {
-            _semaphore.Release();
+            Semaphore.Release();
         }
     }
 
@@ -74,7 +74,7 @@ internal class PortfolioService : IPortfolioService
     {
         if (string.IsNullOrEmpty(orderState.OrderId))
         {
-            return; 
+            return;
         }
 
         if (string.IsNullOrEmpty(orderState.OrderRequestId))
@@ -92,19 +92,15 @@ internal class PortfolioService : IPortfolioService
         await _portfolioRepository.BindOrderToPortfolio(orderState.OrderId, orderRequest.PortfolioId);
     }
 
-
     private async Task<PortfolioBuilder> CreateBuilderByPortfolioId(Guid portfolioId)
     {
         var portfolio = await _portfolioRepository.GetById(portfolioId);
         var instruments = await _instrumentProvider.GetAll();
 
-        var builder = portfolio == null ?
-            new PortfolioBuilder(portfolioId, instruments, _logger) :
-            new PortfolioBuilder(portfolio, instruments, _logger);
+        var builder = portfolio == null ? new PortfolioBuilder(portfolioId, instruments, _logger) : new PortfolioBuilder(portfolio, instruments, _logger);
 
         return builder;
     }
-
 
     private class PortfolioBuilder
     {
@@ -112,25 +108,25 @@ internal class PortfolioService : IPortfolioService
         private readonly Dictionary<Guid, Position> _comissions = [];
         private readonly Dictionary<Guid, Position> _positions = [];
         private readonly Dictionary<string, Instrument> _instrumentsByTicker;
-        private readonly ILogger _logger;
+        // private readonly ILogger _logger;
 
         public PortfolioBuilder(
-            Portfolio portfolio, 
+            Portfolio portfolio,
             IEnumerable<Instrument> instruments,
-            ILogger logger) 
+            ILogger logger)
             : this(portfolio.Id, instruments, logger)
         {
             _positions = portfolio.Positions.ToDictionary(x => x.InstrumentId, x => x);
             _comissions = portfolio.Comissions.ToDictionary(x => x.InstrumentId, x => x);
         }
         public PortfolioBuilder(
-            Guid portfolioId, 
+            Guid portfolioId,
             IEnumerable<Instrument> instruments,
             ILogger logger)
         {
             _portfolioId = portfolioId;
             _instrumentsByTicker = InstrumentsByTicker(instruments);
-            _logger = logger;
+            // _logger = logger;
         }
 
         public PortfolioBuilder Apply(PostOrderResponse orderResponse)
@@ -151,7 +147,7 @@ internal class PortfolioService : IPortfolioService
             {
                 InstrumentId = key,
                 Balance = comissionEntry.Balance + commision.Value,
-            }; ;
+            };
 
             return this;
         }
@@ -206,8 +202,6 @@ internal class PortfolioService : IPortfolioService
         }
 
         private Dictionary<string, Instrument> InstrumentsByTicker(IEnumerable<Instrument> instruments)
-            => instruments.ToDictionary(x => x.Ticker, x => x, StringComparer.InvariantCultureIgnoreCase);
+            => instruments.ToDictionary(x => x.Ticker, x => x, StringComparer.OrdinalIgnoreCase);
     }
 }
-
-

@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 using Vertr.TinvestGateway.Repositories;
-using System.Diagnostics;
 
 namespace Vertr.TinvestGateway.DataAccess.Redis;
 

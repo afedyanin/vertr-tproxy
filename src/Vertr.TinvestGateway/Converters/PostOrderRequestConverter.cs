@@ -1,6 +1,7 @@
 using Vertr.TinvestGateway.Contracts.Orders;
 
 namespace Vertr.TinvestGateway.Converters;
+
 internal static class PostOrderRequestConverter
 {
     public static Tinkoff.InvestApi.V1.PostOrderRequest Convert(this PostOrderRequest request)

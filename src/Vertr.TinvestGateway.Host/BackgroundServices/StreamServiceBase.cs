@@ -1,9 +1,7 @@
 using Grpc.Core;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Vertr.TinvestGateway.BackgroundServices;
+namespace Vertr.TinvestGateway.Host.BackgroundServices;
 
 public abstract class StreamServiceBase : BackgroundService
 {
@@ -72,12 +70,12 @@ public abstract class StreamServiceBase : BackgroundService
                     Logger.LogError(rpcEx, $"{_serviceName} consuming exception. Message={rpcEx.Message}");
                 }
 
-                await Task.Delay(5000);
+                await Task.Delay(5000, stoppingToken);
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex, $"{_serviceName} consuming exception. Message={ex.Message}");
-                await Task.Delay(5000);
+                await Task.Delay(5000, stoppingToken);
             }
         }
     }

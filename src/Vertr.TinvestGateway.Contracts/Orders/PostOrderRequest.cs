@@ -2,6 +2,7 @@ using System.Text.Json;
 using Vertr.TinvestGateway.Contracts.Orders.Enums;
 
 namespace Vertr.TinvestGateway.Contracts.Orders;
+
 public record class PostOrderRequest
 {
     public required string AccountId { get; init; }

@@ -1,6 +1,7 @@
 using Vertr.TinvestGateway.Contracts.MarketData;
 
 namespace Vertr.TinvestGateway.Abstractions;
+
 public interface IMarketDataGateway
 {
     public Task<Instrument[]?> FindInstrument(string query);

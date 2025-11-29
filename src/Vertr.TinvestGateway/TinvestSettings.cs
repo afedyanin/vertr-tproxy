@@ -2,6 +2,7 @@ using Tinkoff.InvestApi;
 using Vertr.TinvestGateway.Contracts.MarketData;
 
 namespace Vertr.TinvestGateway;
+
 public class TinvestSettings
 {
     public InvestApiSettings? InvestApiSettings { get; set; }
@@ -29,5 +30,5 @@ public record class CandleSubscriptionRequest
 
     public bool Disabled { get; set; }
 
-    public int MaxCount { get; set; } 
+    public int MaxCount { get; set; }
 }

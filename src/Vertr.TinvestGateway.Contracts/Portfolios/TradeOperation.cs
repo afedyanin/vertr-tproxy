@@ -1,4 +1,5 @@
 namespace Vertr.TinvestGateway.Contracts.Portfolios;
+
 public record class TradeOperation
 {
     public Guid? Id { get; set; }

@@ -5,7 +5,7 @@ using Vertr.TinvestGateway.Host.BackgroundServices;
 
 namespace Vertr.TinvestGateway.Host;
 
-public class Program
+public static class Program
 {
     public static void Main(string[] args)
     {

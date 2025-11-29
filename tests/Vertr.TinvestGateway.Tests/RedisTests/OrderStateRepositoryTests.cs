@@ -1,4 +1,4 @@
-﻿using StackExchange.Redis;
+using StackExchange.Redis;
 using Vertr.TinvestGateway.Contracts.Orders;
 using Vertr.TinvestGateway.DataAccess.Redis;
 
@@ -24,7 +24,7 @@ public class OrderStateRepositoryTests
     public async Task TearDown()
     {
         var repo = new OrderStateRepository(_connectionMultiplexer);
-        //await repo.Clear();
+        await repo.Clear();
     }
 
     [Test]
@@ -109,5 +109,3 @@ public class OrderStateRepositoryTests
         return state;
     }
 }
-
-

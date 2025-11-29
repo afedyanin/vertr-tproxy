@@ -1,4 +1,4 @@
-﻿using StackExchange.Redis;
+using StackExchange.Redis;
 using Vertr.TinvestGateway.Contracts.Orders;
 using Vertr.TinvestGateway.Contracts.Orders.Enums;
 using Vertr.TinvestGateway.DataAccess.Redis;
@@ -34,7 +34,6 @@ public class OrderResponseRepositoryTests
         var repo = new OrderResponseRepository(_connectionMultiplexer);
         var orderResponse = CreateOrderResponse();
 
-        var portfolioId = Guid.NewGuid();
         await repo.Save(orderResponse);
         var saved = await repo.Get(new Guid(orderResponse.OrderId));
         Assert.That(saved, Is.Not.Null);

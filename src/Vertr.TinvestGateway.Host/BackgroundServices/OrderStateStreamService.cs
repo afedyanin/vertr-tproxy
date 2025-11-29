@@ -2,7 +2,6 @@ using Grpc.Core;
 using Microsoft.Extensions.Options;
 using Tinkoff.InvestApi;
 using Vertr.TinvestGateway.Abstractions;
-using Vertr.TinvestGateway.BackgroundServices;
 using Vertr.TinvestGateway.Converters;
 using Vertr.TinvestGateway.Repositories;
 
@@ -15,8 +14,7 @@ public class OrderStateStreamService : StreamServiceBase
     public OrderStateStreamService(
         IServiceProvider serviceProvider,
         IOptions<TinvestSettings> tinvestOptions,
-        ILogger<OrderTradesStreamService> logger) :
-            base(serviceProvider, tinvestOptions, logger)
+        ILogger<OrderTradesStreamService> logger) : base(serviceProvider, tinvestOptions, logger)
     {
     }
 

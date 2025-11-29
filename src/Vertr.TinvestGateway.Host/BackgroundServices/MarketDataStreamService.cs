@@ -2,7 +2,6 @@ using Grpc.Core;
 using Microsoft.Extensions.Options;
 using Tinkoff.InvestApi;
 using Vertr.TinvestGateway.Abstractions;
-using Vertr.TinvestGateway.BackgroundServices;
 using Vertr.TinvestGateway.Converters;
 using Vertr.TinvestGateway.Repositories;
 
@@ -12,13 +11,12 @@ public class MarketDataStreamService : StreamServiceBase
 {
     protected override bool IsEnabled => TinvestSettings.MarketDataStreamEnabled;
 
-    private Dictionary<Guid, int> _candleLimits = [];
+    private readonly Dictionary<Guid, int> _candleLimits = [];
 
     public MarketDataStreamService(
         IServiceProvider serviceProvider,
         IOptions<TinvestSettings> tinvestOptions,
-        ILogger<MarketDataStreamService> logger) :
-            base(serviceProvider, tinvestOptions, logger)
+        ILogger<MarketDataStreamService> logger) : base(serviceProvider, tinvestOptions, logger)
     {
     }
 
@@ -34,14 +32,14 @@ public class MarketDataStreamService : StreamServiceBase
 
             if (instrument == null)
             {
-                continue; 
+                continue;
             }
 
             _candleLimits[sub.InstrumentId] = sub.MaxCount;
             await instrumentRepository.Save(instrument);
         }
 
-        foreach(var kvp in TinvestSettings.Currencies)
+        foreach (var kvp in TinvestSettings.Currencies)
         {
             var currency = await marketDataGateway.GetInstrumentById(kvp.Value);
 

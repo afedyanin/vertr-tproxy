@@ -1,4 +1,4 @@
-﻿using StackExchange.Redis;
+using StackExchange.Redis;
 using Vertr.TinvestGateway.Contracts.Orders;
 using Vertr.TinvestGateway.Contracts.Orders.Enums;
 using Vertr.TinvestGateway.DataAccess.Redis;
@@ -46,16 +46,16 @@ public class OrderRequestRepositoryTests
     private static PostOrderRequest CreateOrderRequest(Guid portfolioId)
         => new PostOrderRequest
         {
-             AccountId = Guid.NewGuid().ToString(),
-             InstrumentId = Guid.NewGuid(),
-             RequestId = Guid.NewGuid(),
-             PortfolioId = portfolioId,
-             CreatedAt = DateTime.UtcNow,
-             OrderDirection = OrderDirection.Buy,
-             OrderType = OrderType.Market,
-             Price = decimal.Zero,
-             QuantityLots = 10,
-             PriceType = PriceType.Unspecified,
-             TimeInForceType = TimeInForceType.Unspecified,
+            AccountId = Guid.NewGuid().ToString(),
+            InstrumentId = Guid.NewGuid(),
+            RequestId = Guid.NewGuid(),
+            PortfolioId = portfolioId,
+            CreatedAt = DateTime.UtcNow,
+            OrderDirection = OrderDirection.Buy,
+            OrderType = OrderType.Market,
+            Price = decimal.Zero,
+            QuantityLots = 10,
+            PriceType = PriceType.Unspecified,
+            TimeInForceType = TimeInForceType.Unspecified,
         };
 }

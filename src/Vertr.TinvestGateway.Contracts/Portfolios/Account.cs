@@ -1,4 +1,5 @@
 namespace Vertr.TinvestGateway.Contracts.Portfolios;
+
 public record class Account(
     string Id,
     string Name,
@@ -7,4 +8,3 @@ public record class Account(
     string AccountType,
     DateTime OpenedDate,
     DateTime? ClosedDate);
-

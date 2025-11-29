@@ -1,4 +1,4 @@
-﻿using StackExchange.Redis;
+using StackExchange.Redis;
 using Vertr.TinvestGateway.Contracts.MarketData;
 
 namespace Vertr.TinvestGateway.Tests.RedisTests;
@@ -9,7 +9,7 @@ public class SimpleRedisTests
     [Test]
     public async Task CanConnectToRedis()
     {
-        var redis = ConnectionMultiplexer.Connect("localhost");
+        var redis = await ConnectionMultiplexer.ConnectAsync("localhost");
         var db = redis.GetDatabase();
 
         var value = "abcdefg";
@@ -24,18 +24,19 @@ public class SimpleRedisTests
     [Test]
     public async Task CanUsePubSub()
     {
-        var redis = ConnectionMultiplexer.Connect("localhost");
+        var redis = await ConnectionMultiplexer.ConnectAsync("localhost");
         var sub = redis.GetSubscriber();
 
         var cahnnel = new RedisChannel("messages", RedisChannel.PatternMode.Literal);
-        sub.Subscribe(cahnnel).OnMessage(async channelMessage => 
+        var queue = await sub.SubscribeAsync(cahnnel);
+
+        queue.OnMessage(async channelMessage =>
         {
             await Task.Delay(1000);
             Console.WriteLine(channelMessage.Message);
         });
 
-        sub.Publish(cahnnel, "hello");
-
+        await sub.PublishAsync(cahnnel, "hello");
         await Task.Delay(5000);
 
         Assert.Pass();
@@ -44,14 +45,14 @@ public class SimpleRedisTests
     [Test]
     public async Task CanUseSortedSet()
     {
-        var redis = ConnectionMultiplexer.Connect("localhost");
+        var redis = await ConnectionMultiplexer.ConnectAsync("localhost");
         var db = redis.GetDatabase();
 
         var key = new RedisKey("sber");
 
         var t1 = new DateTime(2025, 11, 24, 10, 1, 0);
         var t2 = new DateTime(2025, 11, 24, 10, 2, 0);
-        var t3 = new DateTime(2025, 11, 24, 10, 3, 0);
+        // var t3 = new DateTime(2025, 11, 24, 10, 3, 0);
         var t4 = new DateTime(2025, 11, 24, 10, 4, 0);
 
         // Cleanup
@@ -81,7 +82,7 @@ public class SimpleRedisTests
     [Test]
     public async Task CanUseHashSet()
     {
-        var redis = ConnectionMultiplexer.Connect("localhost");
+        var redis = await ConnectionMultiplexer.ConnectAsync("localhost");
         var db = redis.GetDatabase();
 
         var key = new RedisKey("market.instruments");

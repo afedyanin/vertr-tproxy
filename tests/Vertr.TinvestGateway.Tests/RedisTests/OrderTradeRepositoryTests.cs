@@ -1,4 +1,4 @@
-﻿using StackExchange.Redis;
+using StackExchange.Redis;
 using Vertr.TinvestGateway.Contracts.Orders;
 using Vertr.TinvestGateway.Contracts.Orders.Enums;
 using Vertr.TinvestGateway.Contracts.Portfolios;
@@ -77,8 +77,8 @@ public class OrderTradeRepositoryTests
     private static IEnumerable<Trade> CreateTrades(int count)
     {
         var res = new List<Trade>();
-        
-        for(int i=0; i<=count; i++)
+
+        for (var i = 0; i <= count; i++)
         {
             res.Add(CreateTrade());
         }
@@ -95,4 +95,3 @@ public class OrderTradeRepositoryTests
             Quantity = 34,
         };
 }
-

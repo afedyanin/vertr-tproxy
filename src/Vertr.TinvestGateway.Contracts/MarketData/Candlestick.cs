@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 
 namespace Vertr.TinvestGateway.Contracts.MarketData;
 
@@ -11,30 +11,30 @@ public readonly record struct Candlestick
     public decimal Close { get; }
     public decimal Volume { get; }
 
-    public DateTime GetTime() => new(Time);
+    public DateTime GetDateTime() => new(Time);
 
     public Candlestick(
-        DateTime time, 
-        decimal open, 
-        decimal high, 
-        decimal low, 
-        decimal close, 
+        DateTime time,
+        decimal open,
+        decimal high,
+        decimal low,
+        decimal close,
         decimal volume) : this(
-            time.Ticks, 
-            open, 
-            high, 
-            low, 
-            close, 
+            time.Ticks,
+            open,
+            high,
+            low,
+            close,
             volume)
     {
     }
 
     private Candlestick(
-        long time, 
-        decimal open, 
-        decimal high, 
-        decimal low, 
-        decimal close, 
+        long time,
+        decimal open,
+        decimal high,
+        decimal low,
+        decimal close,
         decimal volume)
     {
         Time = time;
@@ -55,11 +55,6 @@ public readonly record struct Candlestick
     {
         var items = JsonSerializer.Deserialize<decimal[]>(jsonString, JsonOptions.DefaultOptions);
 
-        if (items == null || items.Length < 6)
-        {
-            return null;
-        }
-
-        return new Candlestick((long)items[0], items[1], items[2], items[3], items[4], items[5]);
+        return items == null || items.Length < 6 ? null : new Candlestick((long)items[0], items[1], items[2], items[3], items[4], items[5]);
     }
 }
