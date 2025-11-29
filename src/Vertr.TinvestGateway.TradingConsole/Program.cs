@@ -25,7 +25,7 @@ internal class Program
         _subscriber = _connection.GetSubscriber();
 
         _gatewayClient = RestService.For<ITinvestGatewayClient>(
-            "https://localhost:7132", 
+            "http://localhost:5099", 
             new RefitSettings
             {
                 ContentSerializer = new SystemTextJsonContentSerializer(JsonOptions.DefaultOptions)
