@@ -81,7 +81,7 @@ internal class Program
             AccountId = _accountId, // Get from settings
             InstrumentId = _instrumentId, // Get from channel name
             PortfolioId = _portfolioId, // Get From Strategy Dictionary
-            OrderDirection = OrderDirection.Buy,
+            OrderDirection = GetRandomDirection(),
             OrderType = OrderType.Market,
             TimeInForceType = TimeInForceType.Unspecified,
             PriceType = PriceType.Unspecified,
@@ -93,4 +93,7 @@ internal class Program
         var response = await _gatewayClient.PostOrder(request);
         Console.WriteLine($"Post order response: {response}");
     }
+
+    private static OrderDirection GetRandomDirection()
+        => Random.Shared.Next(0, 2) == 0 ? OrderDirection.Buy : OrderDirection.Sell; 
 }

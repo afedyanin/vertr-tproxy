@@ -29,4 +29,5 @@ public record class CandleSubscriptionRequest
 
     public bool Disabled { get; set; }
 
+    public int MaxCount { get; set; } 
 }

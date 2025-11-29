@@ -12,6 +12,8 @@ public class MarketDataStreamService : StreamServiceBase
 {
     protected override bool IsEnabled => TinvestSettings.MarketDataStreamEnabled;
 
+    private Dictionary<Guid, int> _candleLimits = [];
+
     public MarketDataStreamService(
         IServiceProvider serviceProvider,
         IOptions<TinvestSettings> tinvestOptions,
@@ -35,6 +37,7 @@ public class MarketDataStreamService : StreamServiceBase
                 continue; 
             }
 
+            _candleLimits[sub.InstrumentId] = sub.MaxCount;
             await instrumentRepository.Save(instrument);
         }
 
@@ -97,8 +100,9 @@ public class MarketDataStreamService : StreamServiceBase
             if (response.PayloadCase == Tinkoff.InvestApi.V1.MarketDataResponse.PayloadOneofCase.Candle)
             {
                 var instrumentId = new Guid(response.Candle.InstrumentUid);
+                _candleLimits.TryGetValue(instrumentId, out var maxCount);
                 var candle = response.Candle.ToCandlestick();
-                await candlestickRepository.Save(instrumentId, [candle]);
+                await candlestickRepository.Save(instrumentId, [candle], maxCount);
                 logger.LogInformation($"Candle subscriptions received: candle={candle}");
             }
             else if (response.PayloadCase == Tinkoff.InvestApi.V1.MarketDataResponse.PayloadOneofCase.SubscribeCandlesResponse)
