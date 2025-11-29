@@ -1,8 +1,5 @@
 [*.cs]
-dotnet_diagnostic.IDE0009.severity = none
-dotnet_diagnostic.IDE0040.severity = none
-dotnet_diagnostic.CA1027.severity = none
+dotnet_diagnostic.IDE0009.severity = none # Add 'this' or 'Me' qualification
+dotnet_diagnostic.IDE0040.severity = none # Accessibility modifiers unnecessary
+dotnet_diagnostic.CA1027.severity = none # Mark enums with FlagsAttribute
 dotnet_diagnostic.CA2254.severity = none # The logging message template should not vary between calls.
-
-
-
