@@ -22,7 +22,7 @@ public class MarketDataStreamService : StreamServiceBase
 
     protected override async Task OnBeforeStart(CancellationToken stoppingToken)
     {
-        using var scope = ServiceProvider.CreateScope();
+        await using var scope = ServiceProvider.CreateAsyncScope();
         var marketDataGateway = scope.ServiceProvider.GetRequiredService<IMarketDataGateway>();
         var instrumentRepository = scope.ServiceProvider.GetRequiredService<IInstrumentRepository>();
 
@@ -59,7 +59,7 @@ public class MarketDataStreamService : StreamServiceBase
         DateTime? deadline = null,
         CancellationToken stoppingToken = default)
     {
-        using var scope = ServiceProvider.CreateScope();
+        await using var scope = ServiceProvider.CreateAsyncScope();
         var investApiClient = scope.ServiceProvider.GetRequiredService<InvestApiClient>();
         var candlestickRepository = scope.ServiceProvider.GetRequiredService<ICandlestickRepository>();
 

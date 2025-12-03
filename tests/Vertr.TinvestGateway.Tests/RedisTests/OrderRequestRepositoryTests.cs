@@ -46,7 +46,6 @@ public class OrderRequestRepositoryTests
     private static PostOrderRequest CreateOrderRequest(Guid portfolioId)
         => new PostOrderRequest
         {
-            AccountId = Guid.NewGuid().ToString(),
             InstrumentId = Guid.NewGuid(),
             RequestId = Guid.NewGuid(),
             PortfolioId = portfolioId,

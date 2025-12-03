@@ -4,10 +4,10 @@ namespace Vertr.TinvestGateway.Converters;
 
 internal static class PostOrderRequestConverter
 {
-    public static Tinkoff.InvestApi.V1.PostOrderRequest Convert(this PostOrderRequest request)
+    public static Tinkoff.InvestApi.V1.PostOrderRequest Convert(this PostOrderRequest request, string accountId)
             => new Tinkoff.InvestApi.V1.PostOrderRequest
             {
-                AccountId = request.AccountId,
+                AccountId = accountId,
                 Direction = request.OrderDirection.Convert(),
                 OrderType = request.OrderType.Convert(),
                 Price = request.Price,

@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Tinkoff.InvestApi;
 using Vertr.TinvestGateway.Abstractions;
 using Vertr.TinvestGateway.Contracts.Orders;
@@ -15,18 +16,21 @@ internal class TinvestGatewayOrders : TinvestGatewayBase, IOrderExecutionGateway
     private readonly IOrderRequestRepository _orderRequestRepository;
     private readonly IOrderResponseRepository _orderResponseRepository;
     private readonly IPortfolioService _portfolioService;
+    private readonly TinvestSettings _tinvestSettings;
 
     public TinvestGatewayOrders(
         InvestApiClient investApiClient,
         IOrderRequestRepository orderRequestRepository,
         IOrderResponseRepository orderResponseRepository,
         IPortfolioService portfolioService,
+        IOptions<TinvestSettings> tinvestSettings,
         ILogger<TinvestGatewayOrders> logger) : base(investApiClient)
     {
         _logger = logger;
         _orderRequestRepository = orderRequestRepository;
         _orderResponseRepository = orderResponseRepository;
         _portfolioService = portfolioService;
+        _tinvestSettings = tinvestSettings.Value;
     }
 
     public async Task<PostOrderResponse?> PostOrder(PostOrderRequest request)
@@ -34,7 +38,7 @@ internal class TinvestGatewayOrders : TinvestGatewayBase, IOrderExecutionGateway
         try
         {
             await _orderRequestRepository.Save(request, request.PortfolioId);
-            var tRequest = request.Convert();
+            var tRequest = request.Convert(_tinvestSettings.AccountId);
             var response = await InvestApiClient.Orders.PostOrderAsync(tRequest);
             var orderResponse = response.Convert();
             await _orderResponseRepository.Save(orderResponse);

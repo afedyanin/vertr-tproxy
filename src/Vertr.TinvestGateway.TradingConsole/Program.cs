@@ -10,7 +10,6 @@ namespace Vertr.TinvestGateway.TradingConsole;
 
 internal static class Program
 {
-    private const string AccountId = "1b6184e4-0b7e-493c-b1c8-26094fbf2940";
     private static readonly Guid InstrumentId = new Guid("e6123145-9665-43e0-8413-cd61b8aa9b13");
     private static readonly Guid PortfolioId = new Guid("73C4E51B-B0C9-4D5F-999E-171140E79C54");
 
@@ -78,7 +77,6 @@ internal static class Program
         var request = new PostOrderRequest
         {
             RequestId = Guid.NewGuid(),
-            AccountId = AccountId, // Get from settings
             InstrumentId = InstrumentId, // Get from channel name
             PortfolioId = PortfolioId, // Get From Strategy Dictionary
             OrderDirection = GetRandomDirection(),

@@ -23,7 +23,7 @@ public class OrderStateStreamService : StreamServiceBase
         DateTime? deadline = null,
         CancellationToken stoppingToken = default)
     {
-        using var scope = ServiceProvider.CreateScope();
+        await using var scope = ServiceProvider.CreateAsyncScope();
         var investApiClient = scope.ServiceProvider.GetRequiredService<InvestApiClient>();
         var orderStateRepository = scope.ServiceProvider.GetRequiredService<IOrderStateRepository>();
         var portfolioService = scope.ServiceProvider.GetRequiredService<IPortfolioService>();
